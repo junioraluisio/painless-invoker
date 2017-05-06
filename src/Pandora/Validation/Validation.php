@@ -6,10 +6,10 @@
  * Time: 11:19
  */
 
-namespace Amjr\Pandora\Validation;
+namespace Pandora\Validation;
 
 
-use Amjr\Pandora\Connection\Conn;
+use Pandora\Connection\Conn;
 
 class Validation
 {
@@ -403,13 +403,14 @@ class Validation
      *
      * @return array
      */
-    public function isNotEmpty($str, $field){
-        if(!empty($str)){
+    public function isNotEmpty($str, $field)
+    {
+        if (!empty($str)) {
             $ret = [
                 'response' => true,
                 'message'  => ''
             ];
-        }else{
+        } else {
             $ret = [
                 'response' => false,
                 'message'  => 'Preencha um valor para o campo "' . $field . '"!'

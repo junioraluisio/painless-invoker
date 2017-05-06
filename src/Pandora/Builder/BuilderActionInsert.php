@@ -37,7 +37,7 @@ class BuilderActionInsert
     {
         $text = "";
         
-        $text .= $this->line("use Amjr\\Pandora\\Validation\\Validation;", 0, 1);
+        $text .= $this->line("use Pandora\\Validation\\Validation;", 0, 1);
         
         $nms = $this->getNamespace() . '\\' . $this->getClassName();
         
