@@ -12,7 +12,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "Invoker\\": "src/Invoker"
+      "Pandora\\": "src/Pandora"
     }
   },
   "require": {
