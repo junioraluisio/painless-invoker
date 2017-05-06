@@ -1,0 +1,22 @@
+{
+  "name": "painless/pandora",
+  "description": "Gerador de classes",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "homepage": "https://github.com/junioraluisio/factory/blob/master/composer.json",
+  "authors": [
+    {
+      "name": "Aluisio Matins Junior",
+      "email": "softpuzzle@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Invoker\\": "src/Invoker"
+    }
+  },
+  "require": {
+    "vlucas/phpdotenv": "^2.4",
+    "slim/slim": "^3.8"
+  }
+}

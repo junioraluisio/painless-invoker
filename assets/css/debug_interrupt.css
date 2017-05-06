@@ -1,0 +1,46 @@
+.msgDebug {
+    width:85% !important;
+    display:block !important;
+    top:0 !important;
+    right:0 !important;
+    margin:25px auto !important;
+    background:#f1c40f !important;
+    padding:0 15px 15px 15px !important;
+    border:1px solid #DDDDDD !important;
+    color:#2c3e50 !important;
+    z-index:999 !important;
+    font-family:\"MS Serif\", \"New York\", serif !important;
+    line-height:24px !important;
+}
+.msgDebug h6 {
+    font-weight:bold;
+    font-size:24px !important;
+    font-family:"Courier New", Courier, monospace !important;
+    padding:0 !important;
+    color:#c0392b !important;
+}
+.msgDebug .clear {
+    clear:both !important;
+}
+.msgDebug strong {
+    color:#c0392b !important;
+    font-weight:bold !important;
+}
+.msgDebug pre {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.msgDebug .tip0 {
+    color:#e74c3c;
+    font-weight:bold;
+}
+.msgDebug .tip1 {
+    color:#2c3e50;
+    font-weight:bold;
+}
+.msgDebug .tip2 {
+    color:#c0392b;
+    font-style:italic !important;
+}

@@ -1,0 +1,50 @@
+.msgDebug {
+    width: 85% !important;
+    display: block !important;
+    top: 0 !important;
+    right: 0 !important;
+    margin: 25px auto !important;
+    background: #f7f7f7 !important;
+    padding: 15px !important;
+    border: 1px solid #DDDDDD !important;
+    color: #2c3e50 !important;
+    z-index: 999 !important;
+    font-family: \"MS Serif\", \"New York\", serif !important;
+    line-height: 24px !important;
+}
+
+.msgDebug h6 {
+    font-weight: bold;
+    font-size: 24px !important;
+    margin-bottom: 15px !important;
+    font-family: "Courier New", Courier, monospace !important;
+}
+
+.msgDebug .clear {
+    clear: both !important;
+}
+
+.msgDebug strong {
+    color: #c0392b !important;
+    font-weight: bold !important;
+}
+
+.msgDebug pre {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+}
+
+.msgDebug .tip0 {
+    color: #e74c3c !important;
+    font-weight: bold !important;
+}
+
+.msgDebug .tip1 {
+    color: #A94442 !important;
+    font-weight: bold !important;
+}
+
+.msgDebug .tip2 {
+    color: #95a5a6 !important;
+    font-style: italic !important;
+}
