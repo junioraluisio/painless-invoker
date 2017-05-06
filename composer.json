@@ -1,5 +1,5 @@
 {
-  "name": "painless/pandora",
+  "name": "painless/invoker",
   "description": "Gerador de classes",
   "minimum-stability": "stable",
   "license": "MIT",
