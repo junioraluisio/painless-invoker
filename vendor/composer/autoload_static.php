@@ -19,10 +19,10 @@ class ComposerStaticInit4883d3752288b5709484b2da4a5b05d8
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
+            'Pandora\\' => 8,
         ),
         'I' => 
         array (
-            'Invoker\\' => 8,
             'Interop\\Container\\' => 18,
         ),
         'F' => 
@@ -48,9 +48,9 @@ class ComposerStaticInit4883d3752288b5709484b2da4a5b05d8
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Invoker\\' => 
+        'Pandora\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src/Invoker',
+            0 => __DIR__ . '/../..' . '/src/Pandora',
         ),
         'Interop\\Container\\' => 
         array (

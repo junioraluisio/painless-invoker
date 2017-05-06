@@ -189,15 +189,21 @@ trait BuilderTrait
      */
     public function setNamespace()
     {
-        $arrTableName = explode('_', $this->table);
-        
-        $tableName = isset($arrTableName[0]) ? ucfirst($arrTableName[0]) : '::ERROR::';
+        $tableName = $this->tableName();
         
         $namespace = 'Entities\\' . $tableName . '\\' . $this->getClassName();
         
         $this->namespace = $namespace;
         
         return $namespace;
+    }
+    
+    private function tableName(){
+        $arrTableName = explode('_', $this->table);
+        
+        $tableName = isset($arrTableName[0]) ? ucfirst($arrTableName[0]) : '::ERROR::';
+        
+        return $tableName;
     }
     
     /**
