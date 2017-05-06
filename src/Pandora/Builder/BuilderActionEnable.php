@@ -37,8 +37,10 @@ class BuilderActionEnable
     {
         $text = "";
         
-        $text .= $this->line("use " . $this->getNamespace() . ";", 0, 1);
-        $text .= $this->line("use " . $this->getNamespace() . "Manager;", 0, 2);
+        $nms = $this->getNamespace() . '\\' . $this->getClassName();
+        
+        $text .= $this->line("use " . $nms . ";", 0, 1);
+        $text .= $this->line("use " . $nms . "Manager;", 0, 2);
         
         $this->write .= $text;
         
