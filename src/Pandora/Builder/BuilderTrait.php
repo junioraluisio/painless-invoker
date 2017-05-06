@@ -193,7 +193,7 @@ trait BuilderTrait
         
         $tableName = isset($arrTableName[0]) ? ucfirst($arrTableName[0]) : '::ERROR::';
         
-        $namespace = 'App\\' . $tableName . '\\' . $this->getClassName();
+        $namespace = 'Entities\\' . $tableName . '\\' . $this->getClassName();
         
         $this->namespace = $namespace;
         
