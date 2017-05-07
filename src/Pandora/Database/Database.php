@@ -9,6 +9,7 @@
 namespace Pandora\Database;
 
 use Pandora\Connection\Conn;
+use Pandora\Utils\Messages;
 
 /**
  * Class Database
@@ -238,6 +239,12 @@ class Database
      */
     public function setTable(string $table)
     {
+        $tables = $this->getTables();
+        
+        if(!in_array($table, $tables)){
+            Messages::exception('The table does not exist in the database!',1,1);
+        }
+        
         $this->table = $table;
     }
     
@@ -291,7 +298,7 @@ class Database
     {
         $sql    = "SHOW TABLES";
         $result = $conn->query($sql);
-        $rows   = $result->fetchAll();
+        $rows   = $result->fetchAll(\PDO::FETCH_COLUMN);
         
         $this->tables = $rows;
     }

@@ -8,8 +8,6 @@
 
 namespace Pandora\Utils;
 
-use Exception;
-
 class Messages
 {
     /**
@@ -33,7 +31,7 @@ class Messages
             $msg .= PHP_EOL;
         }
         
-        throw new Exception($msg);
+        throw new \Exception($msg);
     }
     
     /**
