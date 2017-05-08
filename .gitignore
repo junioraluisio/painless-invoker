@@ -48,6 +48,7 @@ tmp/*
 .htaccess
 bootstrap.php
 invoker
+composer.lock
 vendor
 api
 app
