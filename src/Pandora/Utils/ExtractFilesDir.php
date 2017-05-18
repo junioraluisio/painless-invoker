@@ -22,6 +22,9 @@ class ExtractFilesDir
         $this->setPath($path);
     }
     
+    /**
+     * @return array
+     */
     public function files()
     {
         $dir = scandir($this->getPath());
@@ -29,6 +32,11 @@ class ExtractFilesDir
         return array_diff($dir, ['..', '.']);
     }
     
+    /**
+     * @param $path
+     *
+     * @return $this
+     */
     private function setPath($path)
     {
         $this->path = $path;
@@ -36,6 +44,9 @@ class ExtractFilesDir
         return $this;
     }
     
+    /**
+     * @return mixed
+     */
     private function getPath()
     {
         return $this->path;
