@@ -50,5 +50,7 @@ bootstrap.php
 invoker
 composer.lock
 vendor
+tests
 api
 app
+tests/
