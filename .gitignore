@@ -54,3 +54,4 @@ tests
 api
 app
 tests/
+config

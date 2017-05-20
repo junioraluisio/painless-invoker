@@ -14,5 +14,9 @@
     "psr-4": {
       "Pandora\\": "src/Pandora/"
     }
+  },
+  "require-dev": {
+    "vlucas/phpdotenv": "^2.4",
+    "twig/twig": "^2.3"
   }
 }
