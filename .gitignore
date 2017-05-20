@@ -54,6 +54,4 @@ tests
 api
 app
 tests/
-etc/
-/etc/database.php
-/etc/views.php
+/etc/
