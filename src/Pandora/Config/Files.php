@@ -13,6 +13,9 @@ use Pandora\Utils\ExtractFilesDir;
 
 class Files
 {
+    /**
+     * @var \Pandora\Utils\ExtractFilesDir
+     */
     private $extractFilesDir;
     
     /**
