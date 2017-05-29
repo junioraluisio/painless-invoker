@@ -10,22 +10,61 @@ namespace Pandora\Connection;
 
 use Pandora\Utils\Messages;
 
+
+/**
+ * Class Conn
+ * @package Pandora\Connection
+ */
 class Conn extends \PDO
 {
+    /**
+     * @var null|\PDO
+     */
     public  $handle = null;
+    
+    /**
+     * @var string
+     */
     private $db;
+    
+    /**
+     * @var string
+     */
     private $dsn;
+    
+    /**
+     * @var string
+     */
     private $host;
+    
+    /**
+     * @var string
+     */
     private $password;
+    
+    /**
+     * @var string
+     */
     private $user;
     
-    function __construct($db, $host, $user, $password)
+    /**
+     * Conn constructor.
+     *
+     * @param string $db
+     * @param string $host
+     * @param string $user
+     * @param string $password
+     * @param string $driver
+     */
+    function __construct(string $db, string $host, string $user, string $password, string $driver='MySQL')
     {
         $this->setDb($db);
         $this->setHost($host);
         $this->setUser($user);
         $this->setPassword($password);
-        $this->setDsn();
+        $this->setDsn($driver);
+        
+        $ret = false;
         
         try {
             if ($this->handle == null) {
@@ -33,43 +72,66 @@ class Conn extends \PDO
                 
                 $this->handle = $dbh;
                 
-                return $this->handle;
+                $ret = $this->handle;
             }
         } catch (\PDOException $e) {
-            Messages::exception('Connection failed: ' . $e->getMessage(),0,0);
-            
-            return false;
+            Messages::exception('Connection failed: ' . $e->getMessage(), 0, 0);
         }
-    }
-    
-    public function setDsn()
-    {
-        $this->dsn = 'mysql:dbname=' . $this->db . ';host=' . $this->host;
+        
+        return $ret;
     }
     
     /**
-     * @param mixed $password
+     * @param string $driver
+     *
+     * @return \Pandora\Connection\Conn
      */
-    public function setPassword($password)
+    public function setDsn(string $driver): Conn
+    {
+        switch ($driver) {
+            case 'MySQL':
+                $this->dsn = 'mysql:dbname=' . $this->db . ';host=' . $this->host;
+                break;
+            default:
+                $this->dsn = null;
+        }
+        
+        return $this;
+    }
+    
+    /**
+     * @param string $password
+     *
+     * @return \Pandora\Connection\Conn
+     */
+    public function setPassword(string $password): Conn
     {
         $this->password = $password;
+        
+        return $this;
     }
     
     /**
-     * @param mixed $user
+     * @param string $user
+     *
+     * @return \Pandora\Connection\Conn
      */
-    public function setUser($user)
+    public function setUser(string $user): Conn
     {
         $this->user = $user;
+        
+        return $this;
     }
     
     function __destruct()
     {
         $this->handle = null;
+        
+        return $this;
     }
     
     /**
-     * @return mixed
+     * @return string
      */
     public function getDb()
     {
@@ -77,15 +139,19 @@ class Conn extends \PDO
     }
     
     /**
-     * @param mixed $db
+     * @param string $db
+     *
+     * @return \Pandora\Connection\Conn
      */
-    public function setDb($db)
+    public function setDb(string $db): Conn
     {
         $this->db = $db;
+        
+        return $this;
     }
     
     /**
-     * @return mixed
+     * @return string
      */
     public function getHost()
     {
@@ -93,10 +159,14 @@ class Conn extends \PDO
     }
     
     /**
-     * @param mixed $host
+     * @param string $host
+     *
+     * @return \Pandora\Connection\Conn
      */
-    public function setHost($host)
+    public function setHost(string $host): Conn
     {
         $this->host = $host;
+        
+        return $this;
     }
 }

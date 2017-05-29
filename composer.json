@@ -11,12 +11,17 @@
     }
   ],
   "autoload": {
+    "files":[
+      "src/Pandora/Helpers/HelpString.php"
+    ],
     "psr-4": {
-      "Pandora\\": "src/Pandora/"
+      "Pandora\\": "src/Pandora/",
+      "Entities\\": "app/Entities/"
     }
   },
   "require-dev": {
     "vlucas/phpdotenv": "^2.4",
-    "twig/twig": "^2.3"
+    "twig/twig": "^2.3",
+    "phpunit/phpunit": "^6.1"
   }
 }

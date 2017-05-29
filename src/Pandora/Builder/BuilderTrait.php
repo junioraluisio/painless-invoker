@@ -10,6 +10,10 @@ namespace Pandora\Builder;
 
 use Pandora\Database\Database;
 
+/**
+ * Trait BuilderTrait
+ * @package Pandora\Builder
+ */
 trait BuilderTrait
 {
     /**
@@ -38,14 +42,24 @@ trait BuilderTrait
     private $namespace;
     
     /**
+     * @var string com o namespace da interface
+     */
+    private $namespaceInterface;
+    
+    /**
      * @var string com o prefixo que compõe o nome dos campos
      */
     private $prefix;
     
     /**
-     * @var string com o nome da tabela
+     * @var string com o nome da tabela com prefixo
      */
     private $table;
+    
+    /**
+     * @var string com o nome da tabela sem o prefixo
+     */
+    private $tableName;
     
     /**
      * @var string
@@ -57,47 +71,40 @@ trait BuilderTrait
      *
      * @param \Pandora\Database\Database|null $database
      */
-    function __construct(Database $database = null)
+    function __construct($database = null)
     {
-        if($database !== null) {
-            $this->setDatabase($database);
-            $this->setTable($database->getTable());
-            $this->setNamespace();
-            $this->setClassName();
-            $this->setNameParameter();
-            $this->setFields($database->getFields());
-            $this->setPrefix();
-        }
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getClassName()
-    {
-        $arrTableName = explode('_', $this->table);
-        
-        $count = count($arrTableName);
-        
-        $className = '';
-        
-        for ($i = 1; $i <= $count; $i++) {
-            $subName = isset($arrTableName[$i]) ? $arrTableName[$i] : '';
+        if ($database instanceof Database) {
+            $tbl = $database->getTable();
+            $fld = $database->getFields();
             
-            $className .= ucfirst($subName);
+            $this->setDatabase($database)
+                 ->setTable($tbl)
+                 ->setTableName($tbl)
+                 ->setNameParameter($tbl)
+                 ->setClassName($tbl)
+                 ->setNamespace()
+                 ->setNamespaceInterface()
+                 ->setFields($fld)
+                 ->setPrefix();
         }
-        
-        $this->className = $className;
-        
-        return $className;
     }
     
     /**
      * @return string
      */
-    public function setClassName()
+    public function getClassName()
     {
-        $arrTableName = explode('_', $this->table);
+        return $this->className;
+    }
+    
+    /**
+     * @param string $table
+     *
+     * @return $this
+     */
+    public function setClassName(string $table)
+    {
+        $arrTableName = explode('_', $table);
         
         $count = count($arrTableName);
         
@@ -111,55 +118,89 @@ trait BuilderTrait
         
         $this->className = $className;
         
-        return $className;
+        return $this;
     }
     
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDatabase()
+    public function getDatabase(): string
     {
         return $this->database;
     }
     
     /**
-     * @param mixed $database
+     * @return string
      */
-    public function setDatabase($database)
+    public function getTableName(): string
     {
-        $this->database = $database;
+        return $this->tableName;
     }
     
     /**
-     * @return mixed
+     * @param string $tableName
+     *
+     * @return $this
      */
-    public function getFields()
+    public function setTableName(string $tableName)
+    {
+        $arrTableName = explode('_', $tableName);
+        
+        $tableName = isset($arrTableName[0]) ? ucfirst($arrTableName[0]) : '::ERROR::';
+        
+        $this->tableName = $tableName;
+        
+        return $this;
+    }
+    
+    /**
+     * @param \Pandora\Database\Database $database
+     *
+     * @return $this
+     */
+    public function setDatabase(Database $database)
+    {
+        $this->database = $database;
+        
+        return $this;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getFields(): array
     {
         return $this->fields;
     }
     
     /**
-     * @param mixed $fields
+     * @param array $fields
+     *
+     * @return $this
      */
-    public function setFields($fields)
+    public function setFields(array $fields)
     {
         $this->fields = $fields;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getNameParameter()
-    {
-        return $this->nameParameter;
+        
+        return $this;
     }
     
     /**
      * @return string
      */
-    public function setNameParameter()
+    public function getNameParameter(): string
     {
-        $arrTableName = explode('_', $this->table);
+        return $this->nameParameter;
+    }
+    
+    /**
+     * @param string $table
+     *
+     * @return $this
+     */
+    public function setNameParameter(string $table)
+    {
+        $arrTableName = explode('_', $table);
         
         $count = count($arrTableName);
         
@@ -173,13 +214,13 @@ trait BuilderTrait
         
         $this->nameParameter = $nameParameter;
         
-        return $nameParameter;
+        return $this;
     }
     
     /**
-     * @return mixed
+     * @return string
      */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         return $this->namespace;
     }
@@ -187,29 +228,35 @@ trait BuilderTrait
     /**
      * @return string
      */
-    public function setNamespace()
+    public function getNamespaceInterface(): string
     {
-        $tableName = $this->tableName();
-        
-        $namespace = 'Entities\\' . $tableName . '\\' . $this->getClassName();
-        
-        $this->namespace = $namespace;
-        
-        return $namespace;
+        return $this->namespaceInterface;
     }
     
-    private function tableName(){
-        $arrTableName = explode('_', $this->table);
+    /**
+     * @return $this
+     */
+    public function setNamespace()
+    {
+        $this->namespace = 'Entities\\' . $this->getTableName() . '\\' . $this->getClassName();
         
-        $tableName = isset($arrTableName[0]) ? ucfirst($arrTableName[0]) : '::ERROR::';
+        return $this;
+    }
+    
+    /**
+     * @return $this
+     */
+    public function setNamespaceInterface()
+    {
+        $this->namespaceInterface = 'Entities\\Contracts\\' . $this->getTableName() . '\\' . $this->getClassName();
         
-        return $tableName;
+        return $this;
     }
     
     /**
      * @return mixed
      */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return $this->prefix;
     }
@@ -217,7 +264,7 @@ trait BuilderTrait
     /**
      * @return string
      */
-    public function setPrefix()
+    public function setPrefix(): string
     {
         $keys = array_keys($this->fields);
         
@@ -231,27 +278,31 @@ trait BuilderTrait
     }
     
     /**
-     * @return mixed
+     * @return string
      */
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table;
     }
     
     /**
-     * @param mixed $table
+     * @param string $table
+     *
+     * @return $this
      */
-    public function setTable($table)
+    public function setTable(string $table)
     {
         $this->table = $table;
+        
+        return $this;
     }
     
     /**
-     * @param $type
+     * @param string $type
      *
      * @return string
      */
-    public function varTypePHPDoc($type)
+    public function varTypePHPDoc(string $type): string
     {
         switch ($type) {
             case 'tinyint':
@@ -284,7 +335,7 @@ trait BuilderTrait
      *
      * @return string
      */
-    private function eol($n)
+    private function eol($n): string
     {
         $ret = '';
         
@@ -300,7 +351,7 @@ trait BuilderTrait
      *
      * @return string
      */
-    private function idt($n)
+    private function idt($n): string
     {
         $ret = '';
         
@@ -318,23 +369,22 @@ trait BuilderTrait
      *
      * @return string
      */
-    private function line(string $txt, int $space, int $eol)
+    private function line(string $txt, int $space, int $eol): string
     {
         return $this->idt($space) . $txt . $this->eol($eol);
     }
     
     
-    
     /**
      * @return string
      */
-    private function writeHead()
+    private function writeHead(): string
     {
         $text = "";
         
         $text .= $this->line("<?php", 0, 1);
         $text .= $this->line("/**", 0, 1);
-        $text .= $this->line("* Created by Factory.", 1, 1);
+        $text .= $this->line("* Created by Invoker.", 1, 1);
         $text .= $this->line("* Author: Aluisio Martins Junior <junior@mjpsolucoes.com.br>", 1, 1);
         $text .= $this->line("* Date: " . date('d/m/Y'), 1, 1);
         $text .= $this->line("* Time: " . date('H:m'), 1, 1);
@@ -350,7 +400,7 @@ trait BuilderTrait
      *
      * @return string
      */
-    private function writeFoot()
+    private function writeFoot(): string
     {
         $text = $this->line('}', 0, 0);
         

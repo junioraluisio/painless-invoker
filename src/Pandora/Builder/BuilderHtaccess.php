@@ -8,6 +8,10 @@
 
 namespace Pandora\Builder;
 
+/**
+ * Class BuilderHtaccess
+ * @package Pandora\Builder
+ */
 class BuilderHtaccess
 {
     use BuilderTrait;

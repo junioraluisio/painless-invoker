@@ -72,6 +72,9 @@ class BuilderActionInsert
                     case 'token':
                         $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? token(\$_REQUEST['ipt_" . $validateRef . "']) : '';";
                         break;
+                    case 'password':
+                        $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? password(\$_REQUEST['ipt_" . $validateRef . "']) : '';";
+                        break;
                     case 'date_automatic':
                         $line = "\$$nameFlag = date('Y-m-d H:i:s');";
                         break;
@@ -231,7 +234,7 @@ class BuilderActionInsert
         }
         
         $text .= $this->line("", 0, 1);
-        $text .= $this->line("\$" . $obj . "Manager = new " . $className . "Manager(\$conn, \$user);", 4, 2);
+        $text .= $this->line("\$" . $obj . "Manager = new " . $className . "Manager(\$conn, \$" . $obj . ");", 4, 2);
         $text .= $this->line("\$op = \$" . $obj . "Manager->insert();", 4, 2);
         $text .= $this->line("\$msg = \$op['message'];", 4, 1);
         $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 4, 1);

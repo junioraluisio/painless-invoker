@@ -11,13 +11,11 @@ namespace Pandora\Utils;
 class Messages
 {
     /**
-     * @param String $text
+     * @param string $text
      * @param int    $eolStart
      * @param int    $eolEnd
-     *
-     * @throws \Exception
      */
-    static function exception(String $text, int $eolStart, int $eolEnd)
+    static function exception(string $text, int $eolStart, int $eolEnd)
     {
         $msg = '';
         
@@ -31,7 +29,7 @@ class Messages
             $msg .= PHP_EOL;
         }
         
-        throw new \Exception($msg);
+        exit($msg);
     }
     
     /**

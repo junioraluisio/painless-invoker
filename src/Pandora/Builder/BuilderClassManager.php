@@ -8,6 +8,10 @@
 
 namespace Pandora\Builder;
 
+/**
+ * Class BuilderClassManager
+ * @package Pandora\Builder
+ */
 class BuilderClassManager
 {
     use BuilderTrait;
@@ -24,8 +28,9 @@ class BuilderClassManager
         $this->writeStartClass();
         $this->writeAttributes();
         $this->writeMethodConstruct();
-        $this->writeMethodFindAll();
+        $this->writeMethodAll();
         $this->writeMethodFindById();
+        $this->writeMethodFindByFieldsValues();
         $this->writeMethodInsert();
         $this->writeMethodUpdate();
         $this->writeMethodDisableById();
@@ -57,15 +62,15 @@ class BuilderClassManager
         $text .= $this->line("/**", 4, 1);
         $text .= $this->line("* @var string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private \$prefix = '" . $this->prefix . "';", 4, 2);
+        $text .= $this->line("private \$prefix = '" . $this->getPrefix() . "';", 4, 2);
         
         $text .= $this->line("/**", 4, 1);
         $text .= $this->line("* @var string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private \$table  = '" . $this->table . "';", 4, 2);
+        $text .= $this->line("private \$table  = '" . $this->getTable() . "';", 4, 2);
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @var \\App\\Auth\\" . $this->getClassName() . "\\" . $this->getClassName(), 5, 1);
+        $text .= $this->line("* @var \\" . $this->getNamespaceInterface() . "\\i" . $this->getClassName(), 5, 1);
         $text .= $this->line("*/", 5, 1);
         $text .= $this->line("private \$" . $this->getNameParameter() . ";", 4, 2);
         
@@ -83,7 +88,12 @@ class BuilderClassManager
     {
         $text = "";
         
-        $text .= $this->line("class " . $this->className . "Manager", 0, 1);
+        $text .= $this->line("use " . $this->getNamespaceInterface() . "\i" . $this->getClassName() . ';', 0, 1);
+        $text .= $this->line("use " . $this->getNamespaceInterface() . "\i" . $this->getClassName() . 'Manager;', 0, 1);
+        $text .= $this->line("use Pandora\\Connection\\Conn;", 0, 3);
+        
+        $text .= $this->line("class " . $this->getClassName() . "Manager implements i" . $this->getClassName() . "Manager", 0, 1);
+        
         $text .= $this->line("{", 0, 1);
         
         $this->write .= $text;
@@ -105,10 +115,10 @@ class BuilderClassManager
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private function clearPrefix(\$field)", 4, 1);
+        $text .= $this->line("private function clearPrefix(\$field): string", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("return str_replace(\$this->prefix, '', \$field);", 8, 1);
-        $text .= $this->line("}", 4, 2);
+        $text .= $this->line("}", 4, 1);
         
         $this->write .= $text;
         
@@ -122,21 +132,18 @@ class BuilderClassManager
      */
     private function writeMethodConstruct(): string
     {
-        $className     = $this->getClassName();
-        $nameParameter = $this->getNameParameter();
-        
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
         $text .= $this->line("* UserManager constructor.", 5, 1);
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @param \\Pandora\\Connection\\Conn \$conn", 5, 1);
-        $text .= $this->line("* @param \\App\\Auth\\" . $className . "\\" . $className . "  \$" . $nameParameter, 5, 1);
+        $text .= $this->line("* @param \\" . $this->getNamespaceInterface() . "\\i" . $this->getClassName() . "  \$" . $this->getNameParameter(), 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("function __construct(Conn \$conn, " . $className . " \$" . $nameParameter . ")", 4, 1);
+        $text .= $this->line("function __construct(Conn \$conn, i" . $this->getClassName() . " \$" . $this->getNameParameter() . ")", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$this->conn = \$conn;", 8, 2);
-        $text .= $this->line("\$this->" . $nameParameter . "= \$" . $nameParameter . ";", 8, 1);
+        $text .= $this->line("\$this->" . $this->getNameParameter() . "= \$" . $this->getNameParameter() . ";", 8, 1);
         $text .= $this->line("}", 4, 2);
         
         $this->write .= $text;
@@ -151,16 +158,14 @@ class BuilderClassManager
      */
     private function writeMethodDisableById(): string
     {
-        $nameParameter = $this->getNameParameter();
-        
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @return mixed", 5, 1);
+        $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function disableById()", 4, 1);
+        $text .= $this->line("public function disableById(): array", 4, 1);
         $text .= $this->line("{", 4, 1);
-        $text .= $this->line("\$id = \$this->" . $nameParameter . "->getId();", 8, 2);
+        $text .= $this->line("\$id = \$this->" . $this->getNameParameter() . "->getId();", 8, 2);
         $text .= $this->line("\$sql = 'UPDATE ' . \$this->table;", 8, 1);
         $text .= $this->line("\$sql .= ' SET ';", 8, 1);
         $text .= $this->line("\$sql .= \$this->prefix('condition') . ' = \"B\"';", 8, 1);
@@ -194,9 +199,9 @@ class BuilderClassManager
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @return mixed", 5, 1);
+        $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function enableById()", 4, 1);
+        $text .= $this->line("public function enableById(): array", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$id = \$this->" . $this->getNameParameter() . "->getId();", 8, 2);
         $text .= $this->line("\$sql = 'UPDATE ' . \$this->table;", 8, 1);
@@ -236,7 +241,7 @@ class BuilderClassManager
         $text .= $this->line("/**", 4, 1);
         $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private function extractData()", 4, 1);
+        $text .= $this->line("private function extractData(): array", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$data = [];", 8, 2);
         
@@ -273,7 +278,7 @@ class BuilderClassManager
      *
      * @return string
      */
-    private function writeMethodFindAll(): string
+    private function writeMethodAll(): string
     {
         $text = "";
         
@@ -282,7 +287,7 @@ class BuilderClassManager
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function findAll(\$fields = '*')", 4, 1);
+        $text .= $this->line("public function all(\$fields = '*'): array", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$sql = 'SELECT ' . \$this->renameFields(\$fields);", 8, 1);
         $text .= $this->line("\$sql .= ' FROM ' . \$this->table;", 8, 2);
@@ -307,15 +312,48 @@ class BuilderClassManager
         $text .= $this->line("/**", 4, 1);
         $text .= $this->line("* @param string \$id", 5, 1);
         $text .= $this->line("*", 5, 1);
-        $text .= $this->line("* @return mixed", 5, 1);
+        $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function findById(\$id)", 4, 1);
+        $text .= $this->line("public function findById(\$id): array", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$sql = 'SELECT * ';", 8, 1);
         $text .= $this->line("\$sql .= ' FROM ' . \$this->table;", 8, 1);
-        $text .= $this->line("\$sql .= ' WHERE ' . \$this->prefix('id') . ' = \"' . \$id . '\"';", 8, 2);
+        $text .= $this->line("\$sql .= ' WHERE ' . \$this->prefix('id') . ' = \"' . \$id . '\"';", 8, 1);
+        $text .= $this->line("\$sql .= ' LIMIT 1';", 8, 2);
         $text .= $this->line("\$result = \$this->conn->query(\$sql);", 8, 2);
         $text .= $this->line("return \$result->fetchAll();", 8, 1);
+        $text .= $this->line("}", 4, 2);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
+    
+    /**
+     * @return string
+     */
+    private function writeMethodFindByFieldsValues(): string
+    {
+        $text = "";
+        
+        $text .= $this->line("/**", 4, 1);
+        $text .= $this->line("* @param array \$fieldsValues", 5, 1);
+        $text .= $this->line("* @param int   \$limit", 5, 1);
+        $text .= $this->line("*", 5, 1);
+        $text .= $this->line("* @return array", 5, 1);
+        $text .= $this->line("*/", 5, 1);
+        $text .= $this->line("public function findByFieldsValues(array \$fieldsValues, int \$limit): array", 4, 1);
+        $text .= $this->line("{", 4, 1);
+        $text .= $this->line("\$sql = 'SELECT *';", 8, 1);
+        $text .= $this->line("\$sql .= ' FROM ' . \$this->table;", 8, 1);
+        $text .= $this->line("\$sql .= ' WHERE ' . \$this->prefix('condition') . ' = \"A\"';", 8, 2);
+        $text .= $this->line("foreach (\$fieldsValues as \$field=>\$value){", 8, 1);
+        $text .= $this->line("\$sql .= ' AND ' . \$this->prefix(\$field) . ' = \"' . \$value . '\"';", 12, 1);
+        $text .= $this->line("}", 8, 2);
+        $text .= $this->line("\$sql .= (\$limit > 0) ? ' LIMIT ' . \$limit : '';", 12, 2);
+        $text .= $this->line("\$result = \$this->conn->query(\$sql);", 8, 2);
+        $text .= $this->line("\$ret = (\$limit == 1) ? \$result->fetch(\PDO::FETCH_ASSOC) : \$result->fetchAll(\PDO::FETCH_ASSOC);", 8, 2);
+        $text .= $this->line("return !(\$ret) ? [] : \$ret;", 8, 1);
         $text .= $this->line("}", 4, 2);
         
         $this->write .= $text;
@@ -333,9 +371,9 @@ class BuilderClassManager
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @return mixed", 5, 1);
+        $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function insert()", 4, 1);
+        $text .= $this->line("public function insert(): array", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$data = \$this->extractData();", 8, 2);
         $text .= $this->line("\$fields = array_keys(\$data);", 8, 2);
@@ -381,7 +419,7 @@ class BuilderClassManager
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private function prefix(\$field)", 4, 1);
+        $text .= $this->line("private function prefix(\$field): string", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("return \$this->prefix . \$field;", 8, 1);
         $text .= $this->line("}", 4, 2);
@@ -405,7 +443,7 @@ class BuilderClassManager
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private function renameFields(\$fields)", 4, 1);
+        $text .= $this->line("private function renameFields(\$fields): string", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$ret = '*';", 8, 2);
         $text .= $this->line("if (is_array(\$fields)) {", 8, 1);
@@ -441,7 +479,7 @@ class BuilderClassManager
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private function statement(\$sql, \$data)", 4, 1);
+        $text .= $this->line("private function statement(\$sql, \$data): array", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$stmt = \$this->conn->prepare(\$sql);", 8, 2);
         $text .= $this->line("foreach (\$data as \$key => \$value) {", 8, 1);
@@ -469,9 +507,9 @@ class BuilderClassManager
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @return mixed", 5, 1);
+        $text .= $this->line("* @return array", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function update()", 4, 1);
+        $text .= $this->line("public function update(): array", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("/* \$data keys should correspond to valid Table columns on the Database */", 8, 1);
         $text .= $this->line("\$data = \$this->extractData();", 8, 2);
@@ -520,7 +558,6 @@ class BuilderClassManager
         $text = "";
         
         $text .= $this->line("namespace " . $this->getNamespace() . ";", 0, 2);
-        $text .= $this->line("use Pandora\\Connection\\Conn;", 0, 3);
         
         $this->write .= $text;
         

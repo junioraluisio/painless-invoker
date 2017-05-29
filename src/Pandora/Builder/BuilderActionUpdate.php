@@ -9,6 +9,10 @@
 namespace Pandora\Builder;
 
 
+/**
+ * Class BuilderActionUpdate
+ * @package Pandora\Builder
+ */
 class BuilderActionUpdate
 {
     use BuilderTrait;
@@ -37,7 +41,7 @@ class BuilderActionUpdate
     {
         $text = "";
         
-        $text .= $this->line("use Entities\\Validation\\Validation;", 0, 1);
+        $text .= $this->line("use Pandora\\Validation\\Validation;", 0, 1);
         
         $nms = $this->getNamespace() . '\\' . $this->getClassName();
         
@@ -231,7 +235,7 @@ class BuilderActionUpdate
         }
         
         $text .= $this->line("", 0, 1);
-        $text .= $this->line("\$" . $obj . "Manager = new " . $className . "Manager(\$conn, \$user);", 4, 2);
+        $text .= $this->line("\$" . $obj . "Manager = new " . $className . "Manager(\$conn, \$" . $obj . ");", 4, 2);
         $text .= $this->line("\$op = \$" . $obj . "Manager->update();", 4, 2);
         $text .= $this->line("\$msg = \$op['message'];", 4, 1);
         $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 4, 1);

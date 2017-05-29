@@ -18,37 +18,37 @@ use Pandora\Utils\Messages;
 class Database
 {
     /**
-     * @var
+     * @var \Pandora\Connection\Conn
      */
     private $conn;
     
     /**
-     * @var
+     * @var string
      */
     private $database;
     
     /**
-     * @var
+     * @var array
      */
     private $fields;
     
     /**
-     * @var
+     * @var array
      */
     private $indexes;
     
     /**
-     * @var
+     * @var string
      */
     private $table;
     
     /**
-     * @var
+     * @var array
      */
     private $tableInfo;
     
     /**
-     * @var
+     * @var array
      */
     private $tables;
     
@@ -60,46 +60,55 @@ class Database
      */
     function __construct(Conn $conn, string $table)
     {
-        $this->setConn($conn);
-        
-        $this->setDatabase($conn->getDb());
-        $this->setTables($conn);
+        $this->setConn($conn)
+             ->setDatabase($conn->getDb())
+             ->setTables($conn);
         
         if (!empty($table)) {
-            $this->setTable($table);
-            $this->setIndexes($conn);
-            $this->setFields($conn);
+            $this->setTable($table)
+                 ->setIndexes($conn)
+                 ->setFields($conn);
         }
     }
     
+    
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDatabase()
+    public function getDatabase(): string
     {
         return $this->database;
     }
     
-    /**
-     * @param mixed $database
-     */
-    public function setDatabase($database)
-    {
-        $this->database = $database;
-    }
     
     /**
-     * @return mixed
+     * @param $database
+     *
+     * @return \Pandora\Database\Database
      */
-    public function getFields()
+    public function setDatabase($database): Database
+    {
+        $this->database = $database;
+        
+        return $this;
+    }
+    
+    
+    /**
+     * @return array
+     */
+    public function getFields(): array
     {
         return $this->fields;
     }
     
+    
     /**
      * @param \Pandora\Connection\Conn $conn
+     *
+     * @return \Pandora\Database\Database
      */
-    public function setFields(Conn $conn)
+    public function setFields(Conn $conn): Database
     {
         $sql = "SELECT ";
         $sql .= "COLUMN_NAME name, ";
@@ -119,12 +128,12 @@ class Database
         $sql .= "FROM ";
         $sql .= "INFORMATION_SCHEMA.COLUMNS ";
         $sql .= "WHERE ";
-        $sql .= "TABLE_NAME = '" . $this->table . "' ";
-        $sql .= "AND TABLE_SCHEMA = '" . $this->database . "'";
+        $sql .= "TABLE_NAME = '" . $this->getTable() . "' ";
+        $sql .= "AND TABLE_SCHEMA = '" . $this->getDatabase() . "'";
         
         $result = $conn->query($sql);
         
-        $rows = $result->fetchAll(11);
+        $rows = $result->fetchAll(\PDO::FETCH_ASSOC);
         
         $indexes = $this->getIndexes();
         
@@ -161,20 +170,26 @@ class Database
         }
         
         $this->fields = $fields;
+        
+        return $this;
     }
     
+    
     /**
-     * @return mixed
+     * @return array
      */
-    public function getIndexes()
+    public function getIndexes(): array
     {
         return $this->indexes;
     }
     
+    
     /**
      * @param \Pandora\Connection\Conn $conn
+     *
+     * @return \Pandora\Database\Database
      */
-    public function setIndexes(Conn $conn)
+    public function setIndexes(Conn $conn): Database
     {
         $sql = "SELECT ";
         $sql .= "COL.COLUMN_NAME name, ";
@@ -202,8 +217,8 @@ class Database
         $sql .= "INFORMATION_SCHEMA.KEY_COLUMN_USAGE KCU, ";
         $sql .= "INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC ";
         $sql .= "WHERE ";
-        $sql .= "COL.TABLE_NAME = '" . $this->table . "' ";
-        $sql .= "AND COL.TABLE_SCHEMA = '" . $this->database . "' ";
+        $sql .= "COL.TABLE_NAME = '" . $this->getTable() . "' ";
+        $sql .= "AND COL.TABLE_SCHEMA = '" . $this->getDatabase() . "' ";
         $sql .= "AND KCU.CONSTRAINT_SCHEMA = COL.TABLE_SCHEMA ";
         $sql .= "AND KCU.TABLE_NAME = COL.TABLE_NAME ";
         $sql .= "AND KCU.COLUMN_NAME = COL.COLUMN_NAME ";
@@ -213,7 +228,7 @@ class Database
         
         $result = $conn->query($sql);
         
-        $rows = $result->fetchAll(11);
+        $rows = $result->fetchAll(\PDO::FETCH_ASSOC);
         
         $indexes = [];
         
@@ -224,44 +239,54 @@ class Database
         }
         
         $this->indexes = $indexes;
+        
+        return $this;
     }
     
+    
     /**
-     * @return mixed
+     * @return string
      */
-    public function getTable()
+    public function getTable(): string
     {
         return $this->table;
     }
     
+    
     /**
      * @param string $table
+     *
+     * @return \Pandora\Database\Database
      */
-    public function setTable(string $table)
+    public function setTable(string $table): Database
     {
         $tables = $this->getTables();
         
-        if(!in_array($table, $tables)){
-            Messages::exception('The table does not exist in the database!',1,1);
+        if (!in_array($table, $tables)) {
+            Messages::exception('The table does not exist in the database!', 1, 2);
         }
         
         $this->table = $table;
+        
+        return $this;
     }
     
+    
     /**
-     * @return mixed
+     * @return array
      */
-    public function getTableInfo()
+    public function getTableInfo(): array
     {
         return $this->tableInfo;
     }
     
+    
     /**
      * @param \Pandora\Connection\Conn $conn
      *
-     * @return mixed
+     * @return array
      */
-    public function setTableInfo(Conn $conn)
+    public function setTableInfo(Conn $conn): array
     {
         $sql = 'SELECT ';
         $sql .= 'TABLE_COMMENT tbl_comment, ';
@@ -273,53 +298,62 @@ class Database
         $sql .= 'FROM ';
         $sql .= 'INFORMATION_SCHEMA.TABLES ';
         $sql .= 'WHERE ';
-        $sql .= 'table_schema = "' . $this->database . '" ';
-        $sql .= 'AND table_name LIKE "' . $this->table . '"';
+        $sql .= 'table_schema = "' . $this->getDatabase() . '" ';
+        $sql .= 'AND table_name LIKE "' . $this->getTable() . '"';
         
         $result = $conn->query($sql);
         
-        $rows = $result->fetch(11);
+        $rows = $result->fetch(\PDO::FETCH_ASSOC);
         
         return $rows;
     }
     
+    
     /**
-     * @return mixed
+     * @return array
      */
-    public function getTables()
+    public function getTables(): array
     {
         return $this->tables;
     }
     
+    
     /**
      * @param \Pandora\Connection\Conn $conn
+     *
+     * @return \Pandora\Database\Database
      */
-    public function setTables(Conn $conn)
+    public function setTables(Conn $conn): Database
     {
         $sql    = "SHOW TABLES";
         $result = $conn->query($sql);
         $rows   = $result->fetchAll(\PDO::FETCH_COLUMN);
         
         $this->tables = $rows;
+        
+        return $this;
     }
     
+    
     /**
-     * @param Conn $conn
+     * @param \Pandora\Connection\Conn $conn
+     *
+     * @return \Pandora\Database\Database
      */
-    public function setConn(Conn $conn)
+    public function setConn(Conn $conn): Database
     {
         $this->conn = $conn;
+        
+        return $this;
     }
     
     
     /**
-     * Retorna o nome do campo sem o prefixo
-     *
      * @param $field
      *
      * @return string
      */
-    private function fieldNameWithoutPrefix($field)
+    private function fieldNameWithoutPrefix($field): string
     {
         $arrNameVar = explode('_', $field);
         

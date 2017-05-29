@@ -9,6 +9,10 @@
 namespace Pandora\Builder;
 
 
+/**
+ * Class BuilderRoutes
+ * @package Pandora\Builder
+ */
 class BuilderRoutes
 {
     use BuilderTrait;

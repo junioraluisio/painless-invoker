@@ -9,6 +9,10 @@
 namespace Pandora\Builder;
 
 
+/**
+ * Class BuilderSave
+ * @package Pandora\Builder
+ */
 class BuilderSave
 {
     /**
@@ -30,13 +34,15 @@ class BuilderSave
     public function __construct($pathApp, $pathApi)
     {
         $this->pathApp = $pathApp;
-        $this->pathApi  = $pathApi;
+        $this->pathApi = $pathApi;
     }
     
     /**
      * @param \Pandora\Builder\BuilderClass $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveClass(BuilderClass $builder)
+    public function saveClass(BuilderClass $builder): BuilderSave
     {
         $text      = $builder->write();
         $name      = $builder->getClassName();
@@ -50,16 +56,41 @@ class BuilderSave
         
         $file = $dir . $name . '.php';
         
-        $php = fopen($file, 'w');
+        $this->createSaveFile($file, $text);
         
-        fwrite($php, $text);
-        fclose($php);
+        return $this;
+    }
+    
+    /**
+     * @param \Pandora\Builder\BuilderClassInterface $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
+     */
+    public function saveClassInterface(BuilderClassInterface $builder): BuilderSave
+    {
+        $text      = $builder->write();
+        $name      = $builder->getClassName();
+        $namespace = $builder->getNamespaceInterface();
+        
+        $dir = $this->pathApp . $namespace . '/';
+        
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        
+        $file = $dir . 'i' . $name . '.php';
+        
+        $this->createSaveFile($file, $text);
+        
+        return $this;
     }
     
     /**
      * @param \Pandora\Builder\BuilderClassManager $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveManager(BuilderClassManager $builder)
+    public function saveManager(BuilderClassManager $builder): BuilderSave
     {
         $text      = $builder->write();
         $name      = $builder->getClassName();
@@ -73,16 +104,41 @@ class BuilderSave
         
         $file = $dir . $name . 'Manager.php';
         
-        $php = fopen($file, 'w');
+        $this->createSaveFile($file, $text);
         
-        fwrite($php, $text);
-        fclose($php);
+        return $this;
+    }
+    
+    /**
+     * @param \Pandora\Builder\BuilderClassManagerInterface $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
+     */
+    public function saveManagerInterface(BuilderClassManagerInterface $builder): BuilderSave
+    {
+        $text      = $builder->write();
+        $name      = $builder->getClassName();
+        $namespace = $builder->getNamespaceInterface();
+        
+        $dir = $this->pathApp . $namespace . '/';
+        
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        
+        $file = $dir . 'i' . $name . 'Manager.php';
+        
+        $this->createSaveFile($file, $text);
+        
+        return $this;
     }
     
     /**
      * @param \Pandora\Builder\BuilderActionInsert $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveActionInsert(BuilderActionInsert $builder)
+    public function saveActionInsert(BuilderActionInsert $builder): BuilderSave
     {
         $text  = $builder->write();
         $name  = $builder->getNameParameter();
@@ -96,16 +152,17 @@ class BuilderSave
         
         $file = $dir . $name . '_insert.php';
         
-        $php = fopen($file, 'w');
+        $this->createSaveFile($file, $text);
         
-        fwrite($php, $text);
-        fclose($php);
+        return $this;
     }
     
     /**
      * @param \Pandora\Builder\BuilderActionUpdate $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveActionUpdate(BuilderActionUpdate $builder)
+    public function saveActionUpdate(BuilderActionUpdate $builder): BuilderSave
     {
         $text  = $builder->write();
         $name  = $builder->getNameParameter();
@@ -119,16 +176,17 @@ class BuilderSave
         
         $file = $dir . $name . '_update.php';
         
-        $php = fopen($file, 'w');
+        $this->createSaveFile($file, $text);
         
-        fwrite($php, $text);
-        fclose($php);
+        return $this;
     }
     
     /**
      * @param \Pandora\Builder\BuilderActionDisable $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveActionDisable(BuilderActionDisable $builder)
+    public function saveActionDisable(BuilderActionDisable $builder): BuilderSave
     {
         $text  = $builder->write();
         $name  = $builder->getNameParameter();
@@ -142,16 +200,17 @@ class BuilderSave
         
         $file = $dir . $name . '_disable.php';
         
-        $php = fopen($file, 'w');
+        $this->createSaveFile($file, $text);
         
-        fwrite($php, $text);
-        fclose($php);
+        return $this;
     }
     
     /**
      * @param \Pandora\Builder\BuilderActionEnable $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveActionEnable(BuilderActionEnable $builder)
+    public function saveActionEnable(BuilderActionEnable $builder): BuilderSave
     {
         $text  = $builder->write();
         $name  = $builder->getNameParameter();
@@ -165,18 +224,19 @@ class BuilderSave
         
         $file = $dir . $name . '_enable.php';
         
-        $php = fopen($file, 'w');
+        $this->createSaveFile($file, $text);
         
-        fwrite($php, $text);
-        fclose($php);
+        return $this;
     }
     
     /**
      * @param \Pandora\Builder\BuilderHtaccess $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveHtaccess(BuilderHtaccess $builder)
+    public function saveHtaccess(BuilderHtaccess $builder): BuilderSave
     {
-        $text  = $builder->write();
+        $text = $builder->write();
         
         $dir = $this->pathApi . '/';
         
@@ -186,18 +246,20 @@ class BuilderSave
         
         $file = $dir . '.htaccess';
         
-        $php = fopen($file, 'w');
+        $this->createSaveFile($file, $text);
         
-        fwrite($php, $text);
-        fclose($php);
+        return $this;
     }
+    
     
     /**
      * @param \Pandora\Builder\BuilderApiIndex $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
      */
-    public function saveApiIndex(BuilderApiIndex $builder)
+    public function saveApiIndex(BuilderApiIndex $builder): BuilderSave
     {
-        $text  = $builder->write();
+        $text = $builder->write();
         
         $dir = $this->pathApi . '/';
         
@@ -207,6 +269,17 @@ class BuilderSave
         
         $file = $dir . 'index.php';
         
+        $this->createSaveFile($file, $text);
+        
+        return $this;
+    }
+    
+    /**
+     * @param $file
+     * @param $text
+     */
+    private function createSaveFile($file, $text)
+    {
         $php = fopen($file, 'w');
         
         fwrite($php, $text);

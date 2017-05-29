@@ -8,6 +8,10 @@
 
 namespace Pandora\Builder;
 
+/**
+ * Class BuilderBootstrap
+ * @package Pandora\Builder
+ */
 class BuilderBootstrap
 {
     use BuilderTrait;

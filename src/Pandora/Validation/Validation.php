@@ -18,7 +18,7 @@ class Validation
      *
      * @return array
      */
-    public function isBool($bool)
+    public function isBool($bool): array
     {
         if (filter_var($bool, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
             $ret = [
@@ -40,7 +40,7 @@ class Validation
      *
      * @return array
      */
-    public function isCnpj($cnpj)
+    public function isCnpj($cnpj): array
     {
         // Verifica se um número foi informado
         if (empty($cnpj)) {
@@ -136,7 +136,7 @@ class Validation
      *
      * @return array
      */
-    public function isCpf($cpf)
+    public function isCpf($cpf): array
     {
         // Verifica se um número foi informado
         if (empty($cpf)) {
@@ -229,7 +229,7 @@ class Validation
      *
      * @return array
      */
-    public function isEmail(string $email)
+    public function isEmail(string $email): array
     {
         // Verifica se um valor foi informado
         if (empty($email)) {
@@ -261,7 +261,7 @@ class Validation
      *
      * @return array
      */
-    public function isFloat($float)
+    public function isFloat($float): array
     {
         $ret = [
             'response' => false,
@@ -283,7 +283,7 @@ class Validation
      *
      * @return array
      */
-    public function isInt($int)
+    public function isInt($int): array
     {
         $ret = [
             'response' => false,
@@ -305,7 +305,7 @@ class Validation
      *
      * @return array
      */
-    public function isIp(string $ip)
+    public function isIp(string $ip): array
     {
         // Verifica se um valor foi informado
         if (empty($ip)) {
@@ -337,7 +337,7 @@ class Validation
      *
      * @return array
      */
-    public function isLogin($login)
+    public function isLogin($login): array
     {
         if (empty($login)) {
             $ret = [
@@ -370,7 +370,7 @@ class Validation
      *
      * @return array
      */
-    public function isMac(string $mac)
+    public function isMac(string $mac): array
     {
         // Verifica se um valor foi informado
         if (empty($mac)) {
@@ -425,7 +425,7 @@ class Validation
      *
      * @return array
      */
-    public function isPassword(string $password)
+    public function isPassword(string $password): array
     {
         // Verifica se um valor foi informado
         if (empty($password)) {
@@ -507,14 +507,14 @@ class Validation
     }
     
     /**
-     * @param \Entities\Connection\Conn $conn
-     * @param string                    $table
-     * @param string                    $field
-     * @param string                    $value
+     * @param \Pandora\Connection\Conn $conn
+     * @param string                   $table
+     * @param string                   $field
+     * @param string                   $value
      *
      * @return array
      */
-    public function isUnique(Conn $conn, string $table, string $field, string $value)
+    public function isUnique(Conn $conn, string $table, string $field, string $value): array
     {
         $sql = 'SELECT ' . $field;
         $sql .= ' FROM ' . $table;

@@ -15,7 +15,9 @@ use Pandora\Builder\BuilderActionInsert;
 use Pandora\Builder\BuilderActionUpdate;
 use Pandora\Builder\BuilderApiIndex;
 use Pandora\Builder\BuilderClass;
+use Pandora\Builder\BuilderClassInterface;
 use Pandora\Builder\BuilderClassManager;
+use Pandora\Builder\BuilderClassManagerInterface;
 use Pandora\Builder\BuilderHtaccess;
 use Pandora\Builder\BuilderSave;
 use Pandora\Database\Database;
@@ -54,10 +56,10 @@ class Maker
         
         try {
             if (in_array($command, ['-h', '--help'])) {
-                Messages::exception('Command: builder [' . implode(', ', $this->methods) . '] [table_name]', 1, 1);
+                Messages::exception('Command: invoker [' . implode(', ', $this->methods) . '] [table_name]', 1, 2);
             } else {
                 if (!method_exists($this, $command)) {
-                    Messages::exception('The command ' . $command . '() is invalid!', 1, 1);
+                    Messages::exception('Error: The command ' . $command . '() is invalid!', 1, 2);
                 } else {
                     $this->{$command}($this->save);
                 }
@@ -98,8 +100,7 @@ class Maker
     /**
      * @param \Pandora\Builder\BuilderSave $save
      *
-     * @return string
-     * @throws \Exception
+     * @return $this
      */
     private function classes(BuilderSave $save)
     {
@@ -107,11 +108,15 @@ class Maker
             Messages::exception('Set the database table!', 1, 1);
         }
         
-        $builderClass        = new BuilderClass($this->database);
-        $builderClassManager = new BuilderClassManager($this->database);
+        $builderClass                 = new BuilderClass($this->database);
+        $builderClassInterface        = new BuilderClassInterface($this->database);
+        $builderClassManager          = new BuilderClassManager($this->database);
+        $builderClassManagerInterface = new BuilderClassManagerInterface($this->database);
         
         $save->saveClass($builderClass);
+        $save->saveClassInterface($builderClassInterface);
         $save->saveManager($builderClassManager);
+        $save->saveManagerInterface($builderClassManagerInterface);
         
         Messages::console('Classes created successfully!', 1, 1);
         

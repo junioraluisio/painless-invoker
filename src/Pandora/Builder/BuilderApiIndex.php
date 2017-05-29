@@ -8,6 +8,10 @@
 
 namespace Pandora\Builder;
 
+/**
+ * Class BuilderApiIndex
+ * @package Pandora\Builder
+ */
 class BuilderApiIndex
 {
     use BuilderTrait;

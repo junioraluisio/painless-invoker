@@ -8,7 +8,11 @@
 
 namespace Pandora\Builder;
 
-class BuilderClass
+/**
+ * Class BuilderClassInterface
+ * @package Pandora\Builder
+ */
+class BuilderClassInterface
 {
     use BuilderTrait;
     
@@ -22,7 +26,6 @@ class BuilderClass
         $this->writeHead();
         $this->writeNamespace();
         $this->writeStartClass();
-        $this->writeAttributes();
         $this->writeSettersGetters();
         $this->writeFoot();
         
@@ -54,11 +57,7 @@ class BuilderClass
     {
         $text = "";
         
-        $stringClass = "class " . $this->getClassName() . " implements i" . $this->getClassName();
-        
-        $text .= $this->line("use " . $this->getNamespaceInterface() . "\i" . $this->getClassName() . ';', 0, 3);
-        
-        $text .= $this->line($stringClass, 0, 1);
+        $text .= $this->line("interface i" . $this->getClassName(), 0, 1);
         $text .= $this->line("{", 0, 1);
         
         $this->write .= $text;
@@ -75,7 +74,7 @@ class BuilderClass
     {
         $text = "";
         
-        $text .= $this->line("namespace " . $this->getNamespace() . ';', 0, 3);
+        $text .= $this->line("namespace " . $this->namespaceInterface . ';', 0, 3);
         
         $this->write .= $text;
         
@@ -106,47 +105,12 @@ class BuilderClass
             $text .= $this->line("/**", 4, 1);
             $text .= $this->line("* @param " . $type . " \$" . $name_flag . " " . $comment, 5, 1);
             $text .= $this->line("*/", 5, 1);
-            $text .= $this->line("public function " . $methodSet, 4, 1);
-            $text .= $this->line("{", 4, 1);
-            $text .= $this->line("\$this->" . $name_flag . " = \$" . $name_flag . ";", 8, 1);
-            $text .= $this->line("}", 4, 2);
+            $text .= $this->line("public function " . $methodSet . ';', 4, 2);
             
             $text .= $this->line("/**", 4, 1);
             $text .= $this->line("* return " . $type, 5, 1);
             $text .= $this->line("*/", 5, 1);
-            $text .= $this->line("public function " . $methodGet, 4, 1);
-            $text .= $this->line("{", 4, 1);
-            $text .= $this->line("return \$this->" . $name_flag . ";", 8, 1);
-            $text .= $this->line("}", 4, 2);
-        }
-        
-        $this->write .= $text;
-        
-        return $text;
-    }
-    
-    /**
-     * Escreve os atributos da classe
-     *
-     * @return string
-     */
-    private function writeAttributes(): string
-    {
-        $fields = $this->fields;
-        
-        $text = "";
-        
-        foreach ($fields as $field) {
-            $name_flag = $field['name_flag'];
-            
-            $type = $this->varTypePHPDoc($field['type']);
-            
-            $comment = $this->writeComment($field);
-            
-            $text .= $this->line("/**", 4, 1);
-            $text .= $this->line("* @var " . $type . " \$" . $name_flag . " " . $comment, 5, 1);
-            $text .= $this->line("*/", 5, 1);
-            $text .= $this->line("private $" . $name_flag . ";", 4, 2);
+            $text .= $this->line("public function " . $methodGet . ';', 4, 2);
         }
         
         $this->write .= $text;

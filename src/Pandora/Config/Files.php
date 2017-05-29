@@ -9,23 +9,27 @@
 namespace Pandora\Config;
 
 
-use Pandora\Utils\ExtractFilesDir;
+use Pandora\Contracts\iExtractFiles;
 
+/**
+ * Class Files
+ * @package Pandora\Config
+ */
 class Files
 {
     /**
-     * @var \Pandora\Utils\ExtractFilesDir
+     * @var \Pandora\Utils\ExtractFiles
      */
-    private $extractFilesDir;
+    private $extractFiles;
     
     /**
-     * Config constructor.
+     * Files constructor.
      *
-     * @param \Pandora\Utils\ExtractFilesDir $extractFilesDir
+     * @param \Pandora\Contracts\iExtractFiles $extractFiles
      */
-    public function __construct(ExtractFilesDir $extractFilesDir)
+    public function __construct(iExtractFiles $extractFiles)
     {
-        $this->extractFilesDir = $extractFilesDir;
+        $this->extractFiles = $extractFiles;
     }
     
     /**
@@ -33,7 +37,7 @@ class Files
      */
     public function load(): array 
     {
-        $filesConfig = $this->extractFilesDir->files();
+        $filesConfig = $this->extractFiles->files();
         
         $config = [];
         
