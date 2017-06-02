@@ -9,8 +9,9 @@
 namespace Pandora\Auth;
 
 
-use Entities\Contracts\Auth\Users\iUsersManager;
-use Pandora\Contracts\iAuthenticate;
+use Pandora\Contracts\Auth\iAuthenticate;
+use Pandora\Contracts\Database\iDataManager;
+use Pandora\Utils\Messages;
 
 /**
  * Class Authenticate
@@ -19,20 +20,77 @@ use Pandora\Contracts\iAuthenticate;
 class Authenticate implements iAuthenticate
 {
     /**
-     * @param \Entities\Contracts\Auth\Users\iUsersManager $usersManager
-     * @param string                                       $login
-     * @param string                                       $password
-     *
-     * @return bool
+     * @var \Pandora\Contracts\Database\iDataManager
      */
-    public function login(iUsersManager $usersManager, string $login, string $password): bool
+    private $dm;
+    
+    /**
+     * @var string
+     */
+    private $login;
+    
+    /**
+     * @var string
+     */
+    private $password;
+    
+    
+    public function __construct(iDataManager $dm, string $login, string $password)
     {
-        $arr = ['login' => $login];
+        $this->setDm($dm);
+        $this->setLogin($login);
+        $this->setPassword($password);
+    }
+    
+    public function getin(): bool
+    {
+        $this->checkLogin();
+        $this->checkPassword();
         
-        $user = $usersManager->findByFieldsValues($arr, 1);
+        $arr = ['login' => $this->login];
+        
+        $user = $this->dm->findByFieldsValues($arr, 1);
         
         $salt = $user['user_password'];
         
-        return password_verify($password, $salt);
+        return password_verify($this->password, $salt);
+    }
+    
+    private function checkLogin()
+    {
+        if (empty($this->login)) {
+            Messages::exception('Digite um login!');
+        }
+    }
+    
+    private function checkPassword()
+    {
+        if (empty($this->password)) {
+            Messages::exception('Digite uma senha!');
+        }
+    }
+    
+    
+    private function setDm($dm)
+    {
+        $this->dm = $dm;
+        
+        return $this;
+    }
+    
+    
+    private function setLogin($login)
+    {
+        $this->login = $login;
+        
+        return $this;
+    }
+    
+   
+    private function setPassword($password)
+    {
+        $this->password = $password;
+        
+        return $this;
     }
 }

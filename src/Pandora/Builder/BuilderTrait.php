@@ -311,7 +311,7 @@ trait BuilderTrait
             case 'int':
             case 'integer':
             case 'bigint':
-                $ret = 'integer';
+                $ret = 'int';
                 break;
             
             case 'float':

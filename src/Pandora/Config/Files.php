@@ -9,7 +9,7 @@
 namespace Pandora\Config;
 
 
-use Pandora\Contracts\iExtractFiles;
+use Pandora\Contracts\Utils\iExtractFiles;
 
 /**
  * Class Files
@@ -25,7 +25,7 @@ class Files
     /**
      * Files constructor.
      *
-     * @param \Pandora\Contracts\iExtractFiles $extractFiles
+     * @param \Pandora\Contracts\Utils\iExtractFiles $extractFiles
      */
     public function __construct(iExtractFiles $extractFiles)
     {

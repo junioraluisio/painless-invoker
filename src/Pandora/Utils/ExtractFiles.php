@@ -8,7 +8,7 @@
 
 namespace Pandora\Utils;
 
-use Pandora\Contracts\iExtractFiles;
+use Pandora\Contracts\Utils\iExtractFiles;
 
 
 class ExtractFiles implements iExtractFiles

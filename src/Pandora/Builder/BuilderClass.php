@@ -30,6 +30,45 @@ class BuilderClass
     }
     
     /**
+     * Escreve os atributos da classe
+     *
+     * @return string
+     */
+    private function writeAttributes(): string
+    {
+        $fields = $this->fields;
+        
+        $text = "";
+        
+        foreach ($fields as $field) {
+            $name_flag = $field['name_flag'];
+            
+            $type = $this->varTypePHPDoc($field['type']);
+            
+            $comment = $this->writeComment($field);
+            
+            $text .= $this->line("/**", 4, 1);
+            $text .= $this->line("* @var " . $type . " \$" . $name_flag . " " . $comment, 5, 1);
+            $text .= $this->line("*/", 5, 1);
+            $text .= $this->line("private $" . $name_flag . ";", 4, 2);
+        }
+        
+        $text .= $this->line("/**", 4, 1);
+        $text .= $this->line("* @var string", 5, 1);
+        $text .= $this->line("*/", 5, 1);
+        $text .= $this->line("private \$prefix = '" . $this->getPrefix() . "';", 4, 2);
+        
+        $text .= $this->line("/**", 4, 1);
+        $text .= $this->line("* @var string", 5, 1);
+        $text .= $this->line("*/", 5, 1);
+        $text .= $this->line("private \$table  = '" . $this->getTable() . "';", 4, 2);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
+    
+    /**
      * Escreve o comentário dos atributos e métodos setters
      *
      * @param $field
@@ -43,27 +82,6 @@ class BuilderClass
         $comment = $field['comment'] . '. [max-length: ' . $length . ']';
         
         return $comment;
-    }
-    
-    /**
-     * Escreve o início da classe
-     *
-     * @return string
-     */
-    private function writeStartClass(): string
-    {
-        $text = "";
-        
-        $stringClass = "class " . $this->getClassName() . " implements i" . $this->getClassName();
-        
-        $text .= $this->line("use " . $this->getNamespaceInterface() . "\i" . $this->getClassName() . ';', 0, 3);
-        
-        $text .= $this->line($stringClass, 0, 1);
-        $text .= $this->line("{", 0, 1);
-        
-        $this->write .= $text;
-        
-        return $text;
     }
     
     /**
@@ -105,10 +123,13 @@ class BuilderClass
             
             $text .= $this->line("/**", 4, 1);
             $text .= $this->line("* @param " . $type . " \$" . $name_flag . " " . $comment, 5, 1);
+            $text .= $this->line("*", 5, 1);
+            $text .= $this->line("* @return \$this", 5, 1);
             $text .= $this->line("*/", 5, 1);
             $text .= $this->line("public function " . $methodSet, 4, 1);
             $text .= $this->line("{", 4, 1);
-            $text .= $this->line("\$this->" . $name_flag . " = \$" . $name_flag . ";", 8, 1);
+            $text .= $this->line("\$this->" . $name_flag . " = \$" . $name_flag . ";", 8, 2);
+            $text .= $this->line("return \$this;", 8, 1);
             $text .= $this->line("}", 4, 2);
             
             $text .= $this->line("/**", 4, 1);
@@ -120,34 +141,42 @@ class BuilderClass
             $text .= $this->line("}", 4, 2);
         }
         
+        $text .= $this->line("/**", 4, 1);
+        $text .= $this->line("* return string", 5, 1);
+        $text .= $this->line("*/", 5, 1);
+        $text .= $this->line("public function getPrefix(): string", 4, 1);
+        $text .= $this->line("{", 4, 1);
+        $text .= $this->line("return \$this->prefix" . ";", 8, 1);
+        $text .= $this->line("}", 4, 2);
+        
+        $text .= $this->line("/**", 4, 1);
+        $text .= $this->line("* return string", 5, 1);
+        $text .= $this->line("*/", 5, 1);
+        $text .= $this->line("public function getTable(): string", 4, 1);
+        $text .= $this->line("{", 4, 1);
+        $text .= $this->line("return \$this->table" . ";", 8, 1);
+        $text .= $this->line("}", 4, 1);
+        
         $this->write .= $text;
         
         return $text;
     }
     
     /**
-     * Escreve os atributos da classe
+     * Escreve o início da classe
      *
      * @return string
      */
-    private function writeAttributes(): string
+    private function writeStartClass(): string
     {
-        $fields = $this->fields;
-        
         $text = "";
         
-        foreach ($fields as $field) {
-            $name_flag = $field['name_flag'];
-            
-            $type = $this->varTypePHPDoc($field['type']);
-            
-            $comment = $this->writeComment($field);
-            
-            $text .= $this->line("/**", 4, 1);
-            $text .= $this->line("* @var " . $type . " \$" . $name_flag . " " . $comment, 5, 1);
-            $text .= $this->line("*/", 5, 1);
-            $text .= $this->line("private $" . $name_flag . ";", 4, 2);
-        }
+        $stringClass = "class " . $this->getClassName() . " implements iDataObject";
+        
+        $text .= $this->line("use Pandora\Contracts\Database\iDataObject;", 0, 3);
+        
+        $text .= $this->line($stringClass, 0, 1);
+        $text .= $this->line("{", 0, 1);
         
         $this->write .= $text;
         

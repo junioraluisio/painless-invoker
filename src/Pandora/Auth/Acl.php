@@ -8,11 +8,8 @@
 
 namespace Pandora\Auth;
 
-use Entities\Contracts\Auth\Actions\iActions;
-use Entities\Contracts\Auth\Permissions\iPermissionsManager;
-use Entities\Contracts\Auth\Roles\iRoles;
-use Entities\Contracts\Auth\Targets\iTargets;
 use Pandora\Connection\Conn;
+use Pandora\Contracts\Database\iDataManager;
 
 /**
  * Class Acl
@@ -26,38 +23,50 @@ class Acl
     private $conn;
     
     /**
+     * @var \Pandora\Contracts\Database\iDataManager
+     */
+    private $permissions;
+    
+    /**
      * Acl constructor.
      *
-     * @param \Pandora\Connection\Conn $conn
+     * @param \Pandora\Connection\Conn                 $conn
+     * @param \Pandora\Contracts\Database\iDataManager $permissions
      */
-    public function __construct(Conn $conn)
+    public function __construct(Conn $conn, iDataManager $permissions)
     {
         $this->setConn($conn);
+        $this->setPermissions($permissions);
     }
     
     /**
-     * @param \Entities\Contracts\Auth\Roles\iRoles                    $roles
-     * @param \Entities\Contracts\Auth\Actions\iActions                $actions
-     * @param \Entities\Contracts\Auth\Targets\iTargets                $targets
-     * @param \Entities\Contracts\Auth\Permissions\iPermissionsManager $permissionsManager
+     * @param int $roleId
+     * @param int $resourceId
+     * @param int $actionId
      *
      * @return bool
      */
-    public function allow(iRoles $roles, iActions $actions, iTargets $targets, iPermissionsManager $permissionsManager): bool
+    public function allow(int $roleId, int $resourceId, int $actionId): bool
     {
-        $roleId   = $roles->getId();
-        $actionId = $actions->getId();
-        $targetId = $targets->getId();
-        
         $fieldsValues = [
-            'role_id'   => $roleId,
-            'action_id' => $actionId,
-            'target_id' => $targetId
+            'role_id'     => $roleId,
+            'resource_id' => $resourceId,
+            'action_id'   => $actionId
         ];
         
-        $op = $permissionsManager->findByFieldsValues($fieldsValues);
+        return $this->permissions->findUnique($fieldsValues);
+    }
+    
+    /**
+     * @param \Pandora\Contracts\Database\iDataManager $permissions
+     *
+     * @return $this
+     */
+    public function setPermissions(iDataManager $permissions)
+    {
+        $this->permissions = $permissions;
         
-        return count($op) > 0 ? true : false;
+        return $this;
     }
     
     /**

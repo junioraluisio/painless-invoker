@@ -6,7 +6,7 @@
  * Time: 07:09
  */
 
-namespace Pandora\Contracts;
+namespace Pandora\Contracts\Utils;
 
 /**
  * Interface iExtractFiles

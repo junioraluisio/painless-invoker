@@ -109,16 +109,16 @@ class Maker
         }
         
         $builderClass                 = new BuilderClass($this->database);
-        $builderClassInterface        = new BuilderClassInterface($this->database);
-        $builderClassManager          = new BuilderClassManager($this->database);
-        $builderClassManagerInterface = new BuilderClassManagerInterface($this->database);
+        //$builderClassInterface        = new BuilderClassInterface($this->database);
+        //$builderClassManager          = new BuilderClassManager($this->database);
+        //$builderClassManagerInterface = new BuilderClassManagerInterface($this->database);
         
         $save->saveClass($builderClass);
-        $save->saveClassInterface($builderClassInterface);
-        $save->saveManager($builderClassManager);
-        $save->saveManagerInterface($builderClassManagerInterface);
+        //$save->saveClassInterface($builderClassInterface);
+        //$save->saveManager($builderClassManager);
+        //$save->saveManagerInterface($builderClassManagerInterface);
         
-        Messages::console('Classes created successfully!', 1, 1);
+        Messages::console('Classe created successfully!', 1, 1);
         
         return $this;
     }
