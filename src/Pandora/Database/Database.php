@@ -247,7 +247,7 @@ class Database
     /**
      * @return string
      */
-    public function getTable(): string
+    public function getTable()
     {
         return $this->table;
     }
@@ -263,7 +263,7 @@ class Database
         $tables = $this->getTables();
         
         if (!in_array($table, $tables)) {
-            Messages::exception('The table does not exist in the database!', 1, 2);
+            Messages::exception('The table "' . $table . '" does not exist in the database!', 1, 2);
         }
         
         $this->table = $table;

@@ -16,14 +16,13 @@ namespace Pandora\Builder;
 class BuilderSave
 {
     /**
-     * @var string com o caminho principal para armazenamento das classes geradas
-     */
-    private $pathApp;
-    
-    /**
      * @var string com o caminho principal para armazenamento dos arquivos de ações gerados
      */
     private $pathApi;
+    /**
+     * @var string com o caminho principal para armazenamento das classes geradas
+     */
+    private $pathApp;
     
     /**
      * BuilderSave constructor.
@@ -38,23 +37,23 @@ class BuilderSave
     }
     
     /**
-     * @param \Pandora\Builder\BuilderClass $builder
+     * @param \Pandora\Builder\BuilderActionDisable $builder
      *
      * @return \Pandora\Builder\BuilderSave
      */
-    public function saveClass(BuilderClass $builder): BuilderSave
+    public function saveActionDisable(BuilderActionDisable $builder): BuilderSave
     {
-        $text      = $builder->write();
-        $name      = $builder->getClassName();
-        $namespace = $builder->getNamespace();
+        $text  = $builder->write();
+        $name  = $builder->getNameParameter();
+        $class = $builder->getClassName();
         
-        $dir = $this->pathApp . $namespace . '/';
+        $dir = $this->pathApi . $class . '/';
         
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
         
-        $file = $dir . $name . '.php';
+        $file = $dir . $name . '_disable.php';
         
         $this->createSaveFile($file, $text);
         
@@ -62,71 +61,23 @@ class BuilderSave
     }
     
     /**
-     * @param \Pandora\Builder\BuilderClassInterface $builder
+     * @param \Pandora\Builder\BuilderActionEnable $builder
      *
      * @return \Pandora\Builder\BuilderSave
      */
-    public function saveClassInterface(BuilderClassInterface $builder): BuilderSave
+    public function saveActionEnable(BuilderActionEnable $builder): BuilderSave
     {
-        $text      = $builder->write();
-        $name      = $builder->getClassName();
-        $namespace = $builder->getNamespaceInterface();
+        $text  = $builder->write();
+        $name  = $builder->getNameParameter();
+        $class = $builder->getClassName();
         
-        $dir = $this->pathApp . $namespace . '/';
+        $dir = $this->pathApi . $class . '/';
         
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
         
-        $file = $dir . 'i' . $name . '.php';
-        
-        $this->createSaveFile($file, $text);
-        
-        return $this;
-    }
-    
-    /**
-     * @param \Pandora\Builder\BuilderClassManager $builder
-     *
-     * @return \Pandora\Builder\BuilderSave
-     */
-    public function saveManager(BuilderClassManager $builder): BuilderSave
-    {
-        $text      = $builder->write();
-        $name      = $builder->getClassName();
-        $namespace = $builder->getNamespace();
-        
-        $dir = $this->pathApp . $namespace . '/';
-        
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-        
-        $file = $dir . $name . 'Manager.php';
-        
-        $this->createSaveFile($file, $text);
-        
-        return $this;
-    }
-    
-    /**
-     * @param \Pandora\Builder\BuilderClassManagerInterface $builder
-     *
-     * @return \Pandora\Builder\BuilderSave
-     */
-    public function saveManagerInterface(BuilderClassManagerInterface $builder): BuilderSave
-    {
-        $text      = $builder->write();
-        $name      = $builder->getClassName();
-        $namespace = $builder->getNamespaceInterface();
-        
-        $dir = $this->pathApp . $namespace . '/';
-        
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-        
-        $file = $dir . 'i' . $name . 'Manager.php';
+        $file = $dir . $name . '_enable.php';
         
         $this->createSaveFile($file, $text);
         
@@ -182,23 +133,21 @@ class BuilderSave
     }
     
     /**
-     * @param \Pandora\Builder\BuilderActionDisable $builder
+     * @param \Pandora\Builder\BuilderApiIndex $builder
      *
      * @return \Pandora\Builder\BuilderSave
      */
-    public function saveActionDisable(BuilderActionDisable $builder): BuilderSave
+    public function saveApiIndex(BuilderApiIndex $builder): BuilderSave
     {
-        $text  = $builder->write();
-        $name  = $builder->getNameParameter();
-        $class = $builder->getClassName();
+        $text = $builder->write();
         
-        $dir = $this->pathApi . $class . '/';
+        $dir = $this->pathApi . '/';
         
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
         
-        $file = $dir . $name . '_disable.php';
+        $file = $dir . 'index.php';
         
         $this->createSaveFile($file, $text);
         
@@ -206,23 +155,23 @@ class BuilderSave
     }
     
     /**
-     * @param \Pandora\Builder\BuilderActionEnable $builder
+     * @param \Pandora\Builder\BuilderClass $builder
      *
      * @return \Pandora\Builder\BuilderSave
      */
-    public function saveActionEnable(BuilderActionEnable $builder): BuilderSave
+    public function saveClass(BuilderClass $builder): BuilderSave
     {
-        $text  = $builder->write();
-        $name  = $builder->getNameParameter();
-        $class = $builder->getClassName();
+        $text      = $builder->write();
+        $name      = $builder->getClassName();
+        $namespace = $builder->getNamespace();
         
-        $dir = $this->pathApi . $class . '/';
+        $dir = $this->pathApp . $namespace . '/';
         
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
         
-        $file = $dir . $name . '_enable.php';
+        $file = $dir . $name . '.php';
         
         $this->createSaveFile($file, $text);
         
@@ -251,23 +200,18 @@ class BuilderSave
         return $this;
     }
     
-    
-    /**
-     * @param \Pandora\Builder\BuilderApiIndex $builder
-     *
-     * @return \Pandora\Builder\BuilderSave
-     */
-    public function saveApiIndex(BuilderApiIndex $builder): BuilderSave
+    public function saveMiddleware(BuilderMiddleware $builder): BuilderSave
     {
         $text = $builder->write();
+        $name = ucfirst($builder->getTable());
         
-        $dir = $this->pathApi . '/';
+        $dir = $this->pathApp . 'Middlewares/';
         
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
         
-        $file = $dir . 'index.php';
+        $file = $dir . $name . 'Middleware.php';
         
         $this->createSaveFile($file, $text);
         
