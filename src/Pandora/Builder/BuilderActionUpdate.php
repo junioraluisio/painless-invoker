@@ -8,7 +8,6 @@
 
 namespace Pandora\Builder;
 
-
 /**
  * Class BuilderActionUpdate
  * @package Pandora\Builder
@@ -37,16 +36,18 @@ class BuilderActionUpdate
     /**
      * @return string
      */
-    private function writeUses(): string
+    private function writeCheck(): string
     {
         $text = "";
         
-        $text .= $this->line("use Pandora\\Validation\\Validation;", 0, 1);
-        
-        $nms = $this->getNamespace() . '\\' . $this->getClassName();
-        
-        $text .= $this->line("use " . $nms . ";", 0, 1);
-        $text .= $this->line("use " . $nms . "Manager;", 0, 2);
+        $text .= $this->line("\$error = 0;", 0, 2);
+        $text .= $this->line("\$msg = [];", 0, 2);
+        $text .= $this->line("foreach (\$check as \$item) {", 0, 1);
+        $text .= $this->line("\$error += (\$item['response'] === false) ? 1 : 0;", 4, 2);
+        $text .= $this->line("if (!empty(\$item['message'])) {", 4, 1);
+        $text .= $this->line("\$msg[] = \$item['message'];", 8, 1);
+        $text .= $this->line("}", 4, 1);
+        $text .= $this->line("}", 0, 2);
         
         $this->write .= $text;
         
@@ -61,6 +62,10 @@ class BuilderActionUpdate
         $fields = $this->getFields();
         
         $text = "";
+        
+        $line = "\$id = " . "\$_REQUEST['ipt_id'] ?? '';";
+        
+        $text .= $this->line($line, 0, 1);
         
         foreach ($fields as $field) {
             $update      = isset($field['update']) ? $field['update'] : false;
@@ -80,7 +85,7 @@ class BuilderActionUpdate
                         $line = "\$$nameFlag = date('Y-m-d H:i:s');";
                         break;
                     default:
-                        $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_$nameFlag']) ? \$_REQUEST['ipt_$nameFlag'] : '';";
+                        $line = "\$$nameFlag = " . "\$_REQUEST['ipt_$nameFlag'] ?? '';";
                 }
                 
                 $text .= $this->line($line, 0, 1);
@@ -88,6 +93,69 @@ class BuilderActionUpdate
         }
         
         $text .= $this->line("", 0, 1);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
+    
+    /**
+     * @return string
+     */
+    private function writeSetters(): string
+    {
+        $fields = $this->getFields();
+        
+        $obj = $this->getNameParameter();
+        
+        $className = $this->getClassName();
+        
+        $text = "";
+        
+        $text .= $this->line("if (\$error < 1) {", 0, 1);
+        $text .= $this->line("\$" . $obj . " = new " . $className . "();", 4, 2);
+        
+        $text .= $this->line("\$" . $obj . "->setId(\$id);", 4, 1);
+        
+        foreach ($fields as $field) {
+            $update    = isset($field['update']) ? $field['update'] : false;
+            $methodSet = isset($field['method_set']) ? $field['method_set'] : 'err';
+            
+            if ($update) {
+                $text .= $this->line("\$" . $obj . "->" . $methodSet . ";", 4, 1);
+            }
+        }
+        
+        $text .= $this->line("", 0, 1);
+        $text .= $this->line("\$" . $obj . "Manager = new DataManager(\$conn, \$" . $obj . ");", 4, 2);
+        $text .= $this->line("\$op = \$" . $obj . "Manager->update();", 4, 2);
+        $text .= $this->line("\$msg = \$op['message'];", 4, 1);
+        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 4, 1);
+        
+        $text .= $this->line("}", 0, 2);
+        
+        $text .= $this->line("\$ret = json_encode(\$msg);", 0, 2);
+        
+        $text .= $this->line("echo \$ret;", 0, 0);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
+    
+    /**
+     * @return string
+     */
+    private function writeUses(): string
+    {
+        $text = "";
+        
+        $text .= $this->line("use Pandora\\Database\\DataManager;", 0, 1);
+        $text .= $this->line("use Pandora\\Validation\\Validation;", 0, 1);
+        
+        $nms = $this->getNamespace() . '\\' . $this->getClassName();
+        
+        $text .= $this->line("use " . $nms . ";", 0, 2);
         
         $this->write .= $text;
         
@@ -165,7 +233,7 @@ class BuilderActionUpdate
                 if (!empty($indexType)) {
                     switch ($indexType) {
                         case 'UNIQUE':
-                            $line = "array_push(\$check, \$validation->isUnique(\$conn, \$table, '" . $name . "', $" . $nameFlag . "));";
+                            $line = "array_push(\$check, \$validation->isUniqueDiffId(\$conn, \$table, '" . $name . "', $" . $nameFlag . ", \$id));";
                             break;
                         default:
                             $line = "";
@@ -182,69 +250,6 @@ class BuilderActionUpdate
         }
         
         $text .= $this->line("", 0, 1);
-        
-        $this->write .= $text;
-        
-        return $text;
-    }
-    
-    /**
-     * @return string
-     */
-    private function writeCheck(): string
-    {
-        $text = "";
-        
-        $text .= $this->line("\$error = 0;", 0, 2);
-        $text .= $this->line("\$msg = [];", 0, 2);
-        $text .= $this->line("foreach (\$check as \$item) {", 0, 1);
-        $text .= $this->line("\$error += (\$item['response'] === false) ? 1 : 0;", 4, 2);
-        $text .= $this->line("if (!empty(\$item['message'])) {", 4, 1);
-        $text .= $this->line("\$msg[] = \$item['message'];", 8, 1);
-        $text .= $this->line("}", 4, 1);
-        $text .= $this->line("}", 0, 1);
-        
-        $this->write .= $text;
-        
-        return $text;
-    }
-    
-    /**
-     * @return string
-     */
-    private function writeSetters(): string
-    {
-        $fields = $this->getFields();
-        
-        $obj = $this->getNameParameter();
-        
-        $className = $this->getClassName();
-        
-        $text = "";
-        
-        $text .= $this->line("if (\$error < 1) {", 0, 1);
-        $text .= $this->line("\$" . $obj . " = new " . $className . "();", 4, 2);
-        
-        foreach ($fields as $field) {
-            $update    = isset($field['update']) ? $field['update'] : false;
-            $methodSet = isset($field['method_set']) ? $field['method_set'] : 'err';
-            
-            if ($update) {
-                $text .= $this->line("\$" . $obj . "->" . $methodSet . ";", 4, 1);
-            }
-        }
-        
-        $text .= $this->line("", 0, 1);
-        $text .= $this->line("\$" . $obj . "Manager = new " . $className . "Manager(\$conn, \$" . $obj . ");", 4, 2);
-        $text .= $this->line("\$op = \$" . $obj . "Manager->update();", 4, 2);
-        $text .= $this->line("\$msg = \$op['message'];", 4, 1);
-        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 4, 1);
-        
-        $text .= $this->line("}", 0, 2);
-        
-        $text .= $this->line("\$ret = json_encode(\$msg);", 0, 2);
-        
-        $text .= $this->line("echo \$ret;", 0, 0);
         
         $this->write .= $text;
         

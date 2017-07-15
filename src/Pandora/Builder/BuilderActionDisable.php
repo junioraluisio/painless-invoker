@@ -8,7 +8,6 @@
 
 namespace Pandora\Builder;
 
-
 class BuilderActionDisable
 {
     use BuilderTrait;
@@ -33,14 +32,12 @@ class BuilderActionDisable
     /**
      * @return string
      */
-    private function writeUses(): string
+    private function writeMessage(): string
     {
         $text = "";
         
-        $nms = $this->getNamespace() . '\\' . $this->getClassName();
-        
-        $text .= $this->line("use " . $nms . ";", 0, 1);
-        $text .= $this->line("use " . $nms . "Manager;", 0, 2);
+        $text .= $this->line("\$msg  = \$op['message'];", 0, 1);
+        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 0, 2);
         
         $this->write .= $text;
         
@@ -59,7 +56,7 @@ class BuilderActionDisable
         
         $text .= $this->line("\$" . $nameParameter . " = new " . $className . "();", 0, 2);
         $text .= $this->line("\$" . $nameParameter . "->setId(\$id);", 0, 2);
-        $text .= $this->line("\$" . $nameParameter . "Manager = new " . $className . "Manager(\$conn, \$" . $nameParameter . ");", 0, 2);
+        $text .= $this->line("\$" . $nameParameter . "Manager = new DataManager(\$conn, \$" . $nameParameter . ");", 0, 2);
         $text .= $this->line("\$op = \$" . $nameParameter . "Manager->disableById();", 0, 2);
         
         $this->write .= $text;
@@ -84,12 +81,12 @@ class BuilderActionDisable
     /**
      * @return string
      */
-    private function writeMessage(): string
+    private function writeReturn(): string
     {
         $text = "";
         
-        $text .= $this->line("\$msg  = \$op['message'];", 0, 1);
-        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 0, 2);
+        $text .= $this->line("\$ret = json_encode(\$msg);", 0, 2);
+        $text .= $this->line("echo \$ret;", 0, 2);
         
         $this->write .= $text;
         
@@ -99,12 +96,14 @@ class BuilderActionDisable
     /**
      * @return string
      */
-    private function writeReturn(): string
+    private function writeUses(): string
     {
         $text = "";
         
-        $text .= $this->line("\$ret = json_encode(\$msg);", 0, 2);
-        $text .= $this->line("echo \$ret;", 0, 2);
+        $nms = $this->getNamespace() . '\\' . $this->getClassName();
+        
+        $text .= $this->line("use Pandora\\Database\\DataManager;", 0, 1);
+        $text .= $this->line("use " . $nms . ";", 0, 2);
         
         $this->write .= $text;
         

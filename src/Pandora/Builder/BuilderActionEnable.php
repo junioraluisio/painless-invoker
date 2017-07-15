@@ -39,8 +39,8 @@ class BuilderActionEnable
         
         $nms = $this->getNamespace() . '\\' . $this->getClassName();
         
-        $text .= $this->line("use " . $nms . ";", 0, 1);
-        $text .= $this->line("use " . $nms . "Manager;", 0, 2);
+        $text .= $this->line("use Pandora\\Database\\DataManager;", 0, 1);
+        $text .= $this->line("use " . $nms . ";", 0, 2);
         
         $this->write .= $text;
         
@@ -59,7 +59,7 @@ class BuilderActionEnable
         
         $text .= $this->line("\$" . $nameParameter . " = new " . $className . "();", 0, 2);
         $text .= $this->line("\$" . $nameParameter . "->setId(\$id);", 0, 2);
-        $text .= $this->line("\$" . $nameParameter . "Manager = new " . $className . "Manager(\$conn, \$" . $nameParameter . ");", 0, 2);
+        $text .= $this->line("\$" . $nameParameter . "Manager = new DataManager(\$conn, \$" . $nameParameter . ");", 0, 2);
         $text .= $this->line("\$op = \$" . $nameParameter . "Manager->enableById();", 0, 2);
         
         $this->write .= $text;

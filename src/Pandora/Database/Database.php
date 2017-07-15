@@ -120,7 +120,7 @@ class Database
         $sql .= "NUMERIC_PRECISION numeric_precision, ";
         $sql .= "NUMERIC_SCALE numeric_scale, ";
         $sql .= "DATETIME_PRECISION datetime_precision, ";
-        $sql .= "COLLATION_NAME cololation, ";
+        $sql .= "COLLATION_NAME collation, ";
         $sql .= "COLUMN_KEY field_key, ";
         $sql .= "EXTRA extra, ";
         $sql .= "COLUMN_COMMENT field_comment, ";
@@ -201,7 +201,7 @@ class Database
         $sql .= "COL.NUMERIC_PRECISION numeric_precision, ";
         $sql .= "COL.NUMERIC_SCALE numeric_scale, ";
         $sql .= "COL.DATETIME_PRECISION datetime_precision, ";
-        $sql .= "COL.COLLATION_NAME cololation, ";
+        $sql .= "COL.COLLATION_NAME collation, ";
         $sql .= "COL.COLUMN_KEY field_key, ";
         $sql .= "COL.EXTRA extra, ";
         $sql .= "COL.COLUMN_COMMENT field_comment, ";

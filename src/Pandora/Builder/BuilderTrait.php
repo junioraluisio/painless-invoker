@@ -98,6 +98,73 @@ trait BuilderTrait
     }
     
     /**
+     * @return string
+     */
+    public function getDatabase(): string
+    {
+        return $this->database;
+    }
+    
+    /**
+     * @return array informações fornecidas pelo próprio banco de dados
+     *         [name, position, value_default, isnull, type, length, numeric_precision, numeric_scale, datetime_precision, collation, field_key
+     *          extra, field_comment, expression, index_name, index_type, index_ref_schema, index_ref_table, index_ref_column_key, validate, validate_ref,
+     *          comment, insert, update, max_length, name_flag, method_get, method_set]
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getNameParameter(): string
+    {
+        return $this->nameParameter;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getNamespaceInterface(): string
+    {
+        return $this->namespaceInterface;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getPrefix(): string
+    {
+        return $this->prefix;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
+    }
+    
+    /**
      * @param string $table
      *
      * @return $this
@@ -122,38 +189,6 @@ trait BuilderTrait
     }
     
     /**
-     * @return string
-     */
-    public function getDatabase(): string
-    {
-        return $this->database;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getTableName(): string
-    {
-        return $this->tableName;
-    }
-    
-    /**
-     * @param string $tableName
-     *
-     * @return $this
-     */
-    public function setTableName(string $tableName)
-    {
-        $arrTableName = explode('_', $tableName);
-        
-        $tableName = isset($arrTableName[0]) ? ucfirst($arrTableName[0]) : '::ERROR::';
-        
-        $this->tableName = $tableName;
-        
-        return $this;
-    }
-    
-    /**
      * @param \Pandora\Database\Database $database
      *
      * @return $this
@@ -166,14 +201,6 @@ trait BuilderTrait
     }
     
     /**
-     * @return array
-     */
-    public function getFields(): array
-    {
-        return $this->fields;
-    }
-    
-    /**
      * @param array $fields
      *
      * @return $this
@@ -183,14 +210,6 @@ trait BuilderTrait
         $this->fields = $fields;
         
         return $this;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getNameParameter(): string
-    {
-        return $this->nameParameter;
     }
     
     /**
@@ -218,22 +237,6 @@ trait BuilderTrait
     }
     
     /**
-     * @return string
-     */
-    public function getNamespace(): string
-    {
-        return $this->namespace;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getNamespaceInterface(): string
-    {
-        return $this->namespaceInterface;
-    }
-    
-    /**
      * @return $this
      */
     public function setNamespace()
@@ -254,14 +257,6 @@ trait BuilderTrait
     }
     
     /**
-     * @return mixed
-     */
-    public function getPrefix(): string
-    {
-        return $this->prefix;
-    }
-    
-    /**
      * @return string
      */
     public function setPrefix(): string
@@ -278,14 +273,6 @@ trait BuilderTrait
     }
     
     /**
-     * @return string
-     */
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-    
-    /**
      * @param string $table
      *
      * @return $this
@@ -293,6 +280,22 @@ trait BuilderTrait
     public function setTable(string $table)
     {
         $this->table = $table;
+        
+        return $this;
+    }
+    
+    /**
+     * @param string $tableName
+     *
+     * @return $this
+     */
+    public function setTableName(string $tableName)
+    {
+        $arrTableName = explode('_', $tableName);
+        
+        $tableName = isset($arrTableName[0]) ? ucfirst($arrTableName[0]) : '::ERROR::';
+        
+        $this->tableName = $tableName;
         
         return $this;
     }
@@ -374,6 +377,19 @@ trait BuilderTrait
         return $this->idt($space) . $txt . $this->eol($eol);
     }
     
+    /**
+     * Escreve o fechamento da chaves final
+     *
+     * @return string
+     */
+    private function writeFoot(): string
+    {
+        $text = $this->line('}', 0, 0);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
     
     /**
      * @return string
@@ -389,20 +405,6 @@ trait BuilderTrait
         $text .= $this->line("* Date: " . date('d/m/Y'), 1, 1);
         $text .= $this->line("* Time: " . date('H:m'), 1, 1);
         $text .= $this->line("*/", 0, 2);
-        
-        $this->write .= $text;
-        
-        return $text;
-    }
-    
-    /**
-     * Escreve o fechamento da chaves final
-     *
-     * @return string
-     */
-    private function writeFoot(): string
-    {
-        $text = $this->line('}', 0, 0);
         
         $this->write .= $text;
         

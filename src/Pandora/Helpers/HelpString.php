@@ -5,8 +5,46 @@
  * Date: 20/05/2017
  * Time: 15:41
  */
+if (!function_exists('token')) {
+    /**
+     * @param string $type  tipo do campo de comparação
+     * @param string $value campo de comparação
+     *
+     * @return string
+     */
+    function token_user(string $type, string $value)
+    {
+        $header = [
+            'typ' => 'JWT',
+            'alg' => 'HS256'
+        ];
+        $header = json_encode($header);
+        $header = base64_encode($header);
+        
+        $payload = [
+            'type'  => $type,
+            'value' => $value
+        ];
+        $payload = json_encode($payload);
+        $payload = base64_encode($payload);
+        
+        $data = $header . '.' . $payload;
+        
+        $key = $_ENV['JWT_SECRET'] ?? 'hu6ANecrAYed2FeBrUYaze34HaWa2ruzaZa6uxEzadREheWepeThEcremuxeJucewab22truteze4rA8ratheps8raSTaca5adruR36';
+        
+        $signature = hash_hmac('sha256', $data, $key, true);
+        $signature = base64_encode($signature);
+        
+        return $data . '.' . $signature;
+    }
+}
 
 if (!function_exists('password')) {
+    /**
+     * @param string $password senha base para geração do hash
+     *
+     * @return bool|string
+     */
     function password(string $password)
     {
         $options = [
@@ -19,14 +57,14 @@ if (!function_exists('password')) {
 
 if (!function_exists('flag')) {
     /**
-     * @param string $string
+     * @param string $str
      * @param string $slug
      *
      * @return string
      */
-    function flag(string $string, string $slug = '_'): string
+    function flag(string $str, string $slug = '_'): string
     {
-        $string = strtolower(utf8_decode($string));
+        $flag = strtolower(utf8_decode($str));
         
         // Código ASCII das vogais
         $ascii['a'] = range(224, 230);
@@ -54,23 +92,26 @@ if (!function_exists('flag')) {
             255
         ];
         
+        $swap = [];
+        
         foreach ($ascii as $key => $item) {
-            $acentos = '';
-            foreach ($item AS $codigo) {
-                $acentos .= chr($codigo);
+            $accents = '';
+            foreach ($item AS $code) {
+                $accents .= chr($code);
             }
-            $troca[$key] = '/[' . $acentos . ']/i';
+            $swap[$key] = '/[' . $accents . ']/i';
         }
         
-        $string = preg_replace(array_values($troca), array_keys($troca), $string);
+        $flag = preg_replace(array_values($swap), array_keys($swap), $flag);
         
         // Troca tudo que não for letra ou número por um caractere ($slug)
-        $string = preg_replace('/[^a-z0-9]/i', $slug, $string);
-        // Tira os caracteres ($slug) repetidos
-        $string = preg_replace('/' . $slug . '{2,}/i', $slug, $string);
-        $string = trim($string, $slug);
-        $string = strtolower($string);
+        $flag = preg_replace('/[^a-z0-9]/i', $slug, $flag);
         
-        return $string;
+        // Tira os caracteres ($slug) repetidos
+        $flag = preg_replace('/' . $slug . '{2,}/i', $slug, $flag);
+        $flag = trim($flag, $slug);
+        $flag = strtolower($flag);
+        
+        return $flag;
     }
 }

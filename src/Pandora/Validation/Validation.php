@@ -543,6 +543,50 @@ class Validation
     }
     
     /**
+     * @param \Pandora\Connection\Conn $conn
+     * @param string                   $table
+     * @param string                   $field
+     * @param string                   $value
+     * @param string                   $id
+     *
+     * @return array
+     */
+    public function isUniqueDiffId(Conn $conn, string $table, string $field, string $value, string $id): array
+    {
+        $arrPrefix = explode('_', $field);
+        
+        $prefix = $arrPrefix[0] ?? '';
+        
+        $fieldId = $prefix . '_id';
+        
+        $sql = 'SELECT ' . $field;
+        $sql .= ' FROM ' . $table;
+        $sql .= ' WHERE ' . $field . ' = "' . $value . '"';
+        $sql .= ' AND ' . $fieldId . ' <> "' . $id . '"';
+        $sql .= ' LIMIT 1';
+        
+        $result = $conn->prepare($sql);
+        
+        $result->execute();
+        
+        $numRows = $result->rowCount();
+        
+        $ret = [
+            'response' => true,
+            'message'  => ''
+        ];
+        
+        if ($numRows > 0) {
+            $ret = [
+                'response' => false,
+                'message'  => 'O valor "' . $value . '" já existe no banco de dados e não pode ser duplicado!'
+            ];
+        }
+        
+        return $ret;
+    }
+    
+    /**
      * @param string $url
      *
      * @return array

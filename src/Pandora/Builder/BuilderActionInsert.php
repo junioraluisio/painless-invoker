@@ -8,7 +8,6 @@
 
 namespace Pandora\Builder;
 
-
 class BuilderActionInsert
 {
     use BuilderTrait;
@@ -33,16 +32,18 @@ class BuilderActionInsert
     /**
      * @return string
      */
-    private function writeUses(): string
+    private function writeCheck(): string
     {
         $text = "";
         
-        $text .= $this->line("use Pandora\\Validation\\Validation;", 0, 1);
-        
-        $nms = $this->getNamespace() . '\\' . $this->getClassName();
-        
-        $text .= $this->line("use " . $nms . ";", 0, 1);
-        $text .= $this->line("use " . $nms . "Manager;", 0, 2);
+        $text .= $this->line("\$error = 0;", 0, 2);
+        $text .= $this->line("\$msg = [];", 0, 2);
+        $text .= $this->line("foreach (\$check as \$item) {", 0, 1);
+        $text .= $this->line("\$error += (\$item['response'] === false) ? 1 : 0;", 4, 2);
+        $text .= $this->line("if (!empty(\$item['message'])) {", 4, 1);
+        $text .= $this->line("\$msg[] = \$item['message'];", 8, 1);
+        $text .= $this->line("}", 4, 1);
+        $text .= $this->line("}", 0, 2);
         
         $this->write .= $text;
         
@@ -69,17 +70,17 @@ class BuilderActionInsert
                     case 'flag':
                         $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? flag(\$_REQUEST['ipt_" . $validateRef . "']) : '';";
                         break;
-                    case 'token':
-                        $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? token(\$_REQUEST['ipt_" . $validateRef . "']) : '';";
+                    case 'token_user':
+                        $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? token_user('$validateRef', \$_REQUEST['ipt_" . $validateRef . "']) : '';";
                         break;
                     case 'password':
-                        $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? password(\$_REQUEST['ipt_" . $validateRef . "']) : '';";
+                        $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_" . $nameFlag . "']) ? password(\$_REQUEST['ipt_" . $nameFlag . "']) : '';";
                         break;
                     case 'date_automatic':
                         $line = "\$$nameFlag = date('Y-m-d H:i:s');";
                         break;
                     default:
-                        $line = "\$$nameFlag = " . "isset(\$_REQUEST['ipt_$nameFlag']) ? \$_REQUEST['ipt_$nameFlag'] : '';";
+                        $line = "\$$nameFlag = " . "\$_REQUEST['ipt_$nameFlag'] ?? '';";
                 }
                 
                 $text .= $this->line($line, 0, 1);
@@ -87,6 +88,82 @@ class BuilderActionInsert
         }
         
         $text .= $this->line("", 0, 1);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
+    
+    /**
+     * @return string
+     */
+    private function writeSetters(): string
+    {
+        $fields = $this->getFields();
+        
+        $obj = $this->getNameParameter();
+        
+        $className = $this->getClassName();
+        
+        $text = "";
+        
+        $text .= $this->line("if (\$error < 1) {", 0, 1);
+        $text .= $this->line("\$" . $obj . " = new " . $className . "();", 4, 2);
+        
+        $textFields = $this->line("[", 0, 1);
+        
+        foreach ($fields as $key => $field) {
+            $insert    = isset($field['insert']) ? $field['insert'] : false;
+            $methodSet = isset($field['method_set']) ? $field['method_set'] : 'err';
+            $methodGet = isset($field['method_get']) ? $field['method_get'] : 'err';
+            
+            $fieldName = isset($field['name']) ? $field['name'] : '';
+            
+            if ($insert) {
+                $text .= $this->line("\$" . $obj . "->" . $methodSet . ";", 4, 1);
+                
+                $strTemp = "'" . $fieldName . "'" . " => \$" . $obj . "->" . $methodGet;
+                
+                $txtLineTextField = lastItemArray($fields, $key) ? $strTemp : $strTemp . ',';
+                
+                $textFields .= $this->line($txtLineTextField, 8, 1);
+            }
+        }
+        
+        $textFields .= $this->line("];", 4, 0);
+        
+        $text .= $this->line("", 0, 1);
+        $text .= $this->line("\$" . $obj . "Manager = new DataManager(\$conn, \$" . $obj . ");", 4, 2);
+        
+        $text .= $this->line("\$fields = " . $textFields, 4, 2);
+        
+        $text .= $this->line("\$op = \$" . $obj . "Manager->insert(\$fields);", 4, 2);
+        $text .= $this->line("\$msg = \$op['message'];", 4, 1);
+        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 4, 1);
+        
+        $text .= $this->line("}", 0, 2);
+        
+        $text .= $this->line("\$ret = json_encode(\$msg);", 0, 2);
+        
+        $text .= $this->line("echo \$ret;", 0, 0);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
+    
+    /**
+     * @return string
+     */
+    private function writeUses(): string
+    {
+        $text = "";
+        
+        $text .= $this->line("use Pandora\\Database\\DataManager;", 0, 1);
+        $text .= $this->line("use Pandora\\Validation\\Validation;", 0, 1);
+        
+        $nms  = $this->getNamespace() . '\\' . $this->getClassName();
+        $text .= $this->line("use " . $nms . ";", 0, 2);
         
         $this->write .= $text;
         
@@ -179,71 +256,6 @@ class BuilderActionInsert
                 $text .= $nRow > 0 ? $this->line($textLine, 0, 1) : '';
             }
         }
-        
-        $text .= $this->line("", 0, 1);
-        
-        $this->write .= $text;
-        
-        return $text;
-    }
-    
-    /**
-     * @return string
-     */
-    private function writeCheck(): string
-    {
-        $text = "";
-        
-        $text .= $this->line("\$error = 0;", 0, 2);
-        $text .= $this->line("\$msg = [];", 0, 2);
-        $text .= $this->line("foreach (\$check as \$item) {", 0, 1);
-        $text .= $this->line("\$error += (\$item['response'] === false) ? 1 : 0;", 4, 2);
-        $text .= $this->line("if (!empty(\$item['message'])) {", 4, 1);
-        $text .= $this->line("\$msg[] = \$item['message'];", 8, 1);
-        $text .= $this->line("}", 4, 1);
-        $text .= $this->line("}", 0, 1);
-        
-        $this->write .= $text;
-        
-        return $text;
-    }
-    
-    /**
-     * @return string
-     */
-    private function writeSetters(): string
-    {
-        $fields = $this->getFields();
-        
-        $obj = $this->getNameParameter();
-        
-        $className = $this->getClassName();
-        
-        $text = "";
-        
-        $text .= $this->line("if (\$error < 1) {", 0, 1);
-        $text .= $this->line("\$" . $obj . " = new " . $className . "();", 4, 2);
-        
-        foreach ($fields as $field) {
-            $insert    = isset($field['insert']) ? $field['insert'] : false;
-            $methodSet = isset($field['method_set']) ? $field['method_set'] : 'err';
-            
-            if ($insert) {
-                $text .= $this->line("\$" . $obj . "->" . $methodSet . ";", 4, 1);
-            }
-        }
-        
-        $text .= $this->line("", 0, 1);
-        $text .= $this->line("\$" . $obj . "Manager = new " . $className . "Manager(\$conn, \$" . $obj . ");", 4, 2);
-        $text .= $this->line("\$op = \$" . $obj . "Manager->insert();", 4, 2);
-        $text .= $this->line("\$msg = \$op['message'];", 4, 1);
-        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 4, 1);
-        
-        $text .= $this->line("}", 0, 2);
-        
-        $text .= $this->line("\$ret = json_encode(\$msg);", 0, 2);
-        
-        $text .= $this->line("echo \$ret;", 0, 0);
         
         $this->write .= $text;
         

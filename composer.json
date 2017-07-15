@@ -12,7 +12,8 @@
   ],
   "autoload": {
     "files":[
-      "src/Pandora/Helpers/HelpString.php"
+      "src/Pandora/Helpers/HelpString.php",
+      "src/Pandora/Helpers/HelpArray.php"
     ],
     "psr-4": {
       "Pandora\\": "src/Pandora/",
