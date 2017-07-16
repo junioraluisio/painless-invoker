@@ -5,7 +5,7 @@
  * Date: 20/05/2017
  * Time: 15:41
  */
-if (!function_exists('token')) {
+if (!function_exists('token_user')) {
     /**
      * @param string $type  tipo do campo de comparação
      * @param string $value campo de comparação
