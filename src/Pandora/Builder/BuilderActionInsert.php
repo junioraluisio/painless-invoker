@@ -189,6 +189,7 @@ class BuilderActionInsert
             $validateRef = isset($field['validate_ref']) ? $field['validate_ref'] : '';
             $nameFlag    = isset($field['name_flag']) ? $field['name_flag'] : 'err';
             $name        = isset($field['name']) ? $field['name'] : 'err';
+            $name_msg    = isset($field['name_msg']) ? $field['name_msg'] : 'err';
             $isNull      = isset($field['isnull']) ? $field['isnull'] : '';
             $indexType   = isset($field['index_type']) ? $field['index_type'] : '';
             
@@ -198,7 +199,7 @@ class BuilderActionInsert
                 $textLine = $this->line('// Validação do campo ' . $nameFlag, 0, 1);
                 
                 if ($isNull == 'NO' && empty($validateRef)) {
-                    $line = "array_push(\$check, \$validation->isNotEmpty($" . $nameFlag . ", '" . $nameFlag . "'));";
+                    $line = "array_push(\$check, \$validation->isNotEmpty($" . $nameFlag . ", '" . $name_msg . "'));";
                     
                     $textLine .= $this->line($line, 0, 1);
                     
