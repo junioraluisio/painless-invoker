@@ -8,7 +8,6 @@
 
 namespace Pandora\Builder;
 
-
 /**
  * Class BuilderSave
  * @package Pandora\Builder
@@ -19,6 +18,7 @@ class BuilderSave
      * @var string com o caminho principal para armazenamento dos arquivos de ações gerados
      */
     private $pathApi;
+    
     /**
      * @var string com o caminho principal para armazenamento das classes geradas
      */
@@ -214,6 +214,32 @@ class BuilderSave
         $file = $dir . $name . 'Middleware.php';
         
         $this->createSaveFile($file, $text);
+        
+        return $this;
+    }
+    
+    public function saveRoutes(BuilderRoutes $builder): BuilderSave
+    {
+        $text = $builder->write();
+        $name = ucfirst($builder->getClassName());
+        
+        $dir = $this->pathApp . 'Routes/';
+        
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        
+        $file = $dir . $name . 'Routes.php';
+        
+        $this->createSaveFile($file, $text);
+        
+        $textExtra = $builder->writeExtra();
+        
+        $fileExtra = $dir . $name . 'RoutesExtra.php';
+        
+        if(!file_exists($fileExtra)) {
+            $this->createSaveFile($fileExtra, $textExtra);
+        }
         
         return $this;
     }

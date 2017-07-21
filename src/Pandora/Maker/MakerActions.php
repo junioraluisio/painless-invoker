@@ -17,6 +17,7 @@ use Pandora\Builder\BuilderApiIndex;
 use Pandora\Builder\BuilderClass;
 use Pandora\Builder\BuilderHtaccess;
 use Pandora\Builder\BuilderMiddleware;
+use Pandora\Builder\BuilderRoutes;
 use Pandora\Builder\BuilderSave;
 use Pandora\Database\Database;
 use Pandora\Utils\Messages;
@@ -139,6 +140,22 @@ class MakerActions
         $this->save->saveMiddleware($builderMiddleware);
         
         Messages::console('Middleware created successfully!', 1, 1);
+        
+        return $this;
+    }
+    
+    public function routes()
+    {
+        //print_r($this);
+        if (empty($this->database->getTable())) {
+            Messages::exception('Error: Set the database table!', 1, 2);
+        }
+        
+        $builderRoute = new BuilderRoutes($this->database->getTable());
+        
+        $this->save->saveRoutes($builderRoute);
+        
+        Messages::console('Route created successfully!', 1, 1);
         
         return $this;
     }
