@@ -21,12 +21,16 @@ if (!function_exists('path_web')) {
      */
     function path_web()
     {
-        $documentRoot = str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
+        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
         
         $root = str_replace($documentRoot, '', dirname(__DIR__, 3));
         
         $root = str_replace('\\', '/', $root);
         
-        return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . $root;
+        $requestScheme = $_SERVER['REQUEST_SCHEME'] ?? 'http';
+        
+        $serverName = $_SERVER['SERVER_NAME'] ?? '';
+        
+        return $requestScheme . '://' . $serverName . $root;
     }
 }
