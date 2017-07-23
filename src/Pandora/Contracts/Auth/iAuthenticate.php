@@ -29,5 +29,5 @@ interface iAuthenticate
     /**
      * @return bool
      */
-    public function getin(): bool;
+    public function getin(): array;
 }

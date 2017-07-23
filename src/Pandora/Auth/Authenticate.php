@@ -40,7 +40,7 @@ class Authenticate implements iAuthenticate
         $this->setPassword($password);
     }
     
-    public function getin(): bool
+    public function getin(): array
     {
         $this->checkLogin();
         $this->checkPassword();
@@ -51,9 +51,14 @@ class Authenticate implements iAuthenticate
         
         $salt = $user['user_password'] ?? '';
         
-        $ret['user_id']     = $user['user_id'] ?? '';
-        $ret['user_name']   = $user['user_name'] ?? '';
-        $ret['user_verify'] = password_verify($this->password, $salt);
+        $ret['id']        = $user['user_id'] ?? '';
+        $ret['role_id']   = $user['user_role_id'] ?? '';
+        $ret['name']      = $user['user_name'] ?? '';
+        $ret['flag']      = $user['user_flag'] ?? '';
+        $ret['email']     = $user['user_email'] ?? '';
+        $ret['token']     = $user['user_token'] ?? '';
+        $ret['condition'] = $user['user_condition'] ?? '';
+        $ret['verify']    = password_verify($this->password, $salt);
         
         return $ret;
     }
