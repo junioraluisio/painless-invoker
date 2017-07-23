@@ -8,7 +8,6 @@
 
 namespace Pandora\Auth;
 
-
 use Pandora\Contracts\Auth\iAuthenticate;
 use Pandora\Contracts\Database\iDataManager;
 use Pandora\Utils\Messages;
@@ -34,7 +33,6 @@ class Authenticate implements iAuthenticate
      */
     private $password;
     
-    
     public function __construct(iDataManager $dm, string $login, string $password)
     {
         $this->setDm($dm);
@@ -51,9 +49,13 @@ class Authenticate implements iAuthenticate
         
         $user = $this->dm->findByFieldsValues($arr, 1);
         
-        $salt = $user['user_password'];
+        $salt = $user['user_password'] ?? '';
         
-        return password_verify($this->password, $salt);
+        $ret['user_id']     = $user['user_id'] ?? '';
+        $ret['user_name']   = $user['user_name'] ?? '';
+        $ret['user_verify'] = password_verify($this->password, $salt);
+        
+        return $ret;
     }
     
     private function checkLogin()
@@ -70,14 +72,12 @@ class Authenticate implements iAuthenticate
         }
     }
     
-    
     private function setDm($dm)
     {
         $this->dm = $dm;
         
         return $this;
     }
-    
     
     private function setLogin($login)
     {
@@ -86,7 +86,6 @@ class Authenticate implements iAuthenticate
         return $this;
     }
     
-   
     private function setPassword($password)
     {
         $this->password = $password;
