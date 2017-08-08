@@ -93,7 +93,7 @@ class BuilderClass
     {
         $text = "";
         
-        $text .= $this->line("namespace " . $this->getNamespace() . ';', 0, 3);
+        $text .= $this->line("namespace App\\" . $this->getNamespace() . ';', 0, 3);
         
         $this->write .= $text;
         

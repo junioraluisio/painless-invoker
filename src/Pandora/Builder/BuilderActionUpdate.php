@@ -153,7 +153,7 @@ class BuilderActionUpdate
         $text .= $this->line("use Pandora\\Database\\DataManager;", 0, 1);
         $text .= $this->line("use Pandora\\Validation\\Validation;", 0, 1);
         
-        $nms = $this->getNamespace() . '\\' . $this->getClassName();
+        $nms = 'App\\' . $this->getNamespace() . '\\' . $this->getClassName();
         
         $text .= $this->line("use " . $nms . ";", 0, 2);
         

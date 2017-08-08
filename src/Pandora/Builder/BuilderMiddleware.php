@@ -74,7 +74,7 @@ class BuilderMiddleware
     {
         $text = "";
         
-        $text .= $this->line("namespace Middlewares;", 0, 3);
+        $text .= $this->line("namespace App\Middlewares;", 0, 3);
         
         $this->write .= $text;
         

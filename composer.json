@@ -18,7 +18,8 @@
     ],
     "psr-4": {
       "Pandora\\": "src/Pandora/",
-      "Entities\\": "app/Entities/"
+      "App\\Entities\\": "app/Entities/",
+      "App\\Controllers\\": "app/Controllers/"
     }
   },
   "require-dev": {
