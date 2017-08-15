@@ -16,25 +16,16 @@ class BuilderRoutes
 {
     use BuilderTrait;
     
-    function __construct(string $name)
-    {
-        $this->setTable($name)
-             ->setTableName($name)
-             ->setNameParameter($name)
-             ->setClassName($name);
-    }
-    
     /**
      * @return string
      */
     public function write(): string
     {
         $write = $this->writeHead();
-        $write .= $this->routeInsert();
-        $write .= $this->routeUpdate();
-        $write .= $this->routeEnable();
-        $write .= $this->routeDisable();
-        $write .= $this->routeIncludeExtra();
+        $write .= $this->writeUses();
+        $write .= $this->writeContainer();
+        $write .= $this->writeRoutes();
+        $write .= $this->writeRouteIncludeExtra();
         
         return $write;
     }
@@ -49,61 +40,59 @@ class BuilderRoutes
         return $write;
     }
     
-    private function routeDisable()
+    private function writeRouteIncludeExtra()
     {
-        $path = $this->getClassName();
-        $name = $this->getNameParameter();
+        $text = $this->line("//Rotas extras", 0, 1);
+        $text .= $this->line("include 'UsersRoutesExtra.php';", 0, 0);
         
-        $text = $this->line("\$app->delete('/user/{id}', function (Request \$request, Response \$response, \$arguments) {", 0, 1);
-        $text .= $this->line("\$conn = \$this->conn;", 4, 2);
-        $text .= $this->line("include \$this->config['PATH_ROOT'] . '\api\\" . $path . "\\" . $name . "_disable.php';", 4, 1);
+        return $text;
+    }
+    
+    private function writeContainer()
+    {
+        $obj = $this->getClassName();
+        $objVar = $this->getNameParameter();
+        
+        $text = "";
+        
+        $text .= $this->line("\$container['dm'] = function (\$c) {", 0, 1);
+        $text .= $this->line("\$$objVar = new " . $obj . "();", 4, 2);
+        $text .= $this->line("return new DataManager(\$c['conn'], \$$objVar);", 4, 1);
+        $text .= $this->line("};", 0, 2);
+        
+        return $text;
+    }
+    
+    private function writeRoutes()
+    {
+        $obj = $this->getClassName();
+        $objVar = $this->getNameParameter();
+        
+        $actionClass = '\\App\\Actions\\' . $obj . 'Actions::class';
+        
+        $text = $this->line("\$app->group('/$objVar', function () {", 0, 1);
+        $text .= $this->line("\$this->map(['PATCH'], '/{id}', $actionClass . ':enable');", 4, 1);
+        $text .= $this->line("\$this->map(['DELETE'], '/{id}', $actionClass . ':disable');", 4, 1);
+        $text .= $this->line("\$this->map(['PUT'], '/{id}', $actionClass . ':update');", 4, 1);
+        $text .= $this->line("\$this->map(['POST'], '', $actionClass . ':insert');", 4, 1);
         $text .= $this->line("});", 0, 2);
         
         return $text;
     }
     
-    private function routeEnable()
-    {
-        $path = $this->getClassName();
-        $name = $this->getNameParameter();
-        
-        $text = $this->line("\$app->patch('/user/{id}', function (Request \$request, Response \$response, \$arguments) {", 0, 1);
-        $text .= $this->line("\$conn = \$this->conn;", 4, 2);
-        $text .= $this->line("include \$this->config['PATH_ROOT'] . '\api\\" . $path . "\\" . $name . "_enable.php';", 4, 1);
-        $text .= $this->line("});", 0, 2);
-        
-        return $text;
-    }
     
-    private function routeIncludeExtra()
-    {
-        $text = $this->line("include 'UsersRoutesExtra.php';", 0, 0);
-        
-        return $text;
-    }
     
-    private function routeInsert()
+    /**
+     * @return string
+     */
+    private function writeUses(): string
     {
-        $path = $this->getClassName();
-        $name = $this->getNameParameter();
+        $text = $this->line("use Pandora\\Database\\DataManager;", 0, 1);
         
-        $text = $this->line("\$app->post('/user', function (Request \$request, Response \$response, \$arguments) {", 0, 1);
-        $text .= $this->line("\$conn = \$this->conn;", 4, 2);
-        $text .= $this->line("include \$this->config['PATH_ROOT'] . '\api\\" . $path . "\\" . $name . "_insert.php';", 4, 1);
-        $text .= $this->line("});", 0, 2);
+        $nms  = 'App\\' . $this->getNamespace() . '\\' . $this->getClassName();
+        $text .= $this->line("use " . $nms . ";", 0, 2);
         
-        return $text;
-    }
-    
-    private function routeUpdate()
-    {
-        $path = $this->getClassName();
-        $name = $this->getNameParameter();
-        
-        $text = $this->line("\$app->put('/user/{id}', function (Request \$request, Response \$response, \$arguments) {", 0, 1);
-        $text .= $this->line("\$conn = \$this->conn;", 4, 2);
-        $text .= $this->line("include \$this->config['PATH_ROOT'] . '\api\\" . $path . "\\" . $name . "_update.php';", 4, 1);
-        $text .= $this->line("});", 0, 2);
+        $this->write .= $text;
         
         return $text;
     }

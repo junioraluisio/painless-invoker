@@ -37,6 +37,29 @@ class BuilderSave
     }
     
     /**
+     * @param \Pandora\Builder\BuilderActions $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
+     */
+    public function saveAction(BuilderActions $builder): BuilderSave
+    {
+        $text = $builder->write();
+        $name = $builder->getClassName();
+        
+        $dir = $this->pathApp . '/Actions/';
+        
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        
+        $file = $dir . $name . 'Actions.php';
+        
+        $this->createSaveFile($file, $text);
+        
+        return $this;
+    }
+    
+    /**
      * @param \Pandora\Builder\BuilderActionDisable $builder
      *
      * @return \Pandora\Builder\BuilderSave
@@ -223,7 +246,7 @@ class BuilderSave
         $text = $builder->write();
         $name = ucfirst($builder->getClassName());
         
-        $dir = $this->pathApp . 'Routes/';
+        $dir = $this->pathApp . 'Routes/' . $name . '/';
         
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
@@ -237,7 +260,7 @@ class BuilderSave
         
         $fileExtra = $dir . $name . 'RoutesExtra.php';
         
-        if(!file_exists($fileExtra)) {
+        if (!file_exists($fileExtra)) {
             $this->createSaveFile($fileExtra, $textExtra);
         }
         

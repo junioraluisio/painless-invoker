@@ -9,10 +9,7 @@
 namespace Pandora\Maker;
 
 
-use Pandora\Builder\BuilderActionDisable;
-use Pandora\Builder\BuilderActionEnable;
-use Pandora\Builder\BuilderActionInsert;
-use Pandora\Builder\BuilderActionUpdate;
+use Pandora\Builder\BuilderActions;
 use Pandora\Builder\BuilderApiIndex;
 use Pandora\Builder\BuilderClass;
 use Pandora\Builder\BuilderHtaccess;
@@ -55,28 +52,22 @@ class MakerActions
     /**
      * @return $this
      */
-    public function actions()
+    public function action()
     {
         if (empty($this->database->getTable())) {
             Messages::exception('Set the database table!', 1, 2);
         }
         
-        $builderActionInsert  = new BuilderActionInsert($this->getDatabase());
-        $builderActionUpdate  = new BuilderActionUpdate($this->getDatabase());
-        $builderActionDisable = new BuilderActionDisable($this->getDatabase());
-        $builderActionEnable  = new BuilderActionEnable($this->getDatabase());
+        $builderAction  = new BuilderActions($this->getDatabase());
         
-        $this->save->saveActionInsert($builderActionInsert);
-        $this->save->saveActionUpdate($builderActionUpdate);
-        $this->save->saveActionDisable($builderActionDisable);
-        $this->save->saveActionEnable($builderActionEnable);
+        $this->save->saveAction($builderAction);
         
-        Messages::console('Actions created successfully!', 1, 1);
+        Messages::console('Action created successfully!', 1, 1);
         
         return $this;
     }
     
-    public function classes()
+    public function class()
     {
         if (empty($this->database->getTable())) {
             Messages::exception('Error: Set the database table!', 1, 2);
@@ -86,7 +77,7 @@ class MakerActions
         
         $this->save->saveClass($builderClass);
         
-        Messages::console('Classe created successfully!', 1, 1);
+        Messages::console('Class created successfully!', 1, 1);
         
         return $this;
     }
@@ -151,7 +142,7 @@ class MakerActions
             Messages::exception('Error: Set the database table!', 1, 2);
         }
         
-        $builderRoute = new BuilderRoutes($this->database->getTable());
+        $builderRoute = new BuilderRoutes($this->database);
         
         $this->save->saveRoutes($builderRoute);
         
@@ -174,14 +165,6 @@ class MakerActions
     private function getName(): string
     {
         return $this->name;
-    }
-    
-    /**
-     * @return string
-     */
-    private function getTable(): string
-    {
-        return $this->table;
     }
     
     /**

@@ -19,7 +19,8 @@
     "psr-4": {
       "Pandora\\": "src/Pandora/",
       "App\\Entities\\": "app/Entities/",
-      "App\\Controllers\\": "app/Controllers/"
+      "App\\Controllers\\": "app/Controllers/",
+      "App\\Actions\\": "app/Actions/"
     }
   },
   "require-dev": {

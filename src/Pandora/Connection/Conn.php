@@ -8,14 +8,16 @@
 
 namespace Pandora\Connection;
 
+use Pandora\Contracts\Connection\iConn;
 use Pandora\Utils\Messages;
+use PDO;
 
 
 /**
  * Class Conn
  * @package Pandora\Connection
  */
-class Conn extends \PDO
+class Conn extends PDO implements iConn
 {
     /**
      * @var null|\PDO

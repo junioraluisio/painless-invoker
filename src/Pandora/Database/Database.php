@@ -71,7 +71,6 @@ class Database
         }
     }
     
-    
     /**
      * @return string
      */
@@ -79,7 +78,6 @@ class Database
     {
         return $this->database;
     }
-    
     
     /**
      * @param $database
@@ -93,7 +91,6 @@ class Database
         return $this;
     }
     
-    
     /**
      * @return array
      */
@@ -101,7 +98,6 @@ class Database
     {
         return $this->fields;
     }
-    
     
     /**
      * @param \Pandora\Connection\Conn $conn
@@ -144,19 +140,20 @@ class Database
             
             $fields[$colName] = $row;
             
-            $fields[$colName]['index_name']           = isset($indexes[$colName]['index_name']) ? $indexes[$colName]['index_name'] : null;
-            $fields[$colName]['index_type']           = isset($indexes[$colName]['index_type']) ? $indexes[$colName]['index_type'] : null;
-            $fields[$colName]['index_ref_schema']     = isset($indexes[$colName]['index_ref_schema']) ? $indexes[$colName]['index_ref_schema'] : null;
-            $fields[$colName]['index_ref_table']      = isset($indexes[$colName]['index_ref_table']) ? $indexes[$colName]['index_ref_table'] : null;
-            $fields[$colName]['index_ref_column_key'] = isset($indexes[$colName]['index_ref_column_key']) ? $indexes[$colName]['index_ref_column_key'] : null;
+            $fields[$colName]['index_name']           = $indexes[$colName]['index_name'] ?? null;
+            $fields[$colName]['index_type']           = $indexes[$colName]['index_type'] ?? null;
+            $fields[$colName]['index_ref_schema']     = $indexes[$colName]['index_ref_schema'] ?? null;
+            $fields[$colName]['index_ref_table']      = $indexes[$colName]['index_ref_table'] ?? null;
+            $fields[$colName]['index_ref_column_key'] = $indexes[$colName]['index_ref_column_key'] ?? null;
             
             $arrComment = json_decode(utf8_encode($row['field_comment']), true);
             
-            $fields[$colName]['validate']     = isset($arrComment['validate']) ? $arrComment['validate'] : null;
-            $fields[$colName]['validate_ref'] = isset($arrComment['validate_ref']) ? $arrComment['validate_ref'] : null;
-            $fields[$colName]['comment']      = isset($arrComment['comment']) ? $arrComment['comment'] : null;
-            $fields[$colName]['insert']       = isset($arrComment['insert']) ? $arrComment['insert'] : null;
-            $fields[$colName]['update']       = isset($arrComment['update']) ? $arrComment['update'] : null;
+            $fields[$colName]['name_msg']     = $arrComment['name_msg'] ?? null;
+            $fields[$colName]['validate']     = $arrComment['validate'] ?? null;
+            $fields[$colName]['validate_ref'] = $arrComment['validate_ref'] ?? null;
+            $fields[$colName]['comment']      = $arrComment['comment'] ?? null;
+            $fields[$colName]['insert']       = $arrComment['insert'] ?? null;
+            $fields[$colName]['update']       = $arrComment['update'] ?? null;
             
             $length = !empty($row['length']) ? $row['length'] : $row['numeric_precision'] . ',' . $row['numeric_scale'];
             
@@ -164,16 +161,16 @@ class Database
             
             $name_flag = $this->fieldNameWithoutPrefix($colName);
             
-            $fields[$colName]['name_flag']  = $name_flag;
-            $fields[$colName]['method_get'] = 'get' . ucfirst($name_flag) . '()';
-            $fields[$colName]['method_set'] = 'set' . ucfirst($name_flag) . '($' . $name_flag . ')';
+            $fields[$colName]['name_flag']   = $name_flag;
+            $fields[$colName]['name_length'] = strlen($name_flag);
+            $fields[$colName]['method_get']  = 'get' . ucfirst($name_flag) . '()';
+            $fields[$colName]['method_set']  = 'set' . ucfirst($name_flag) . '($' . $name_flag . ')';
         }
         
         $this->fields = $fields;
         
         return $this;
     }
-    
     
     /**
      * @return array
@@ -182,7 +179,6 @@ class Database
     {
         return $this->indexes;
     }
-    
     
     /**
      * @param \Pandora\Connection\Conn $conn
@@ -243,7 +239,6 @@ class Database
         return $this;
     }
     
-    
     /**
      * @return string
      */
@@ -251,7 +246,6 @@ class Database
     {
         return $this->table;
     }
-    
     
     /**
      * @param string $table
@@ -271,7 +265,6 @@ class Database
         return $this;
     }
     
-    
     /**
      * @return array
      */
@@ -279,7 +272,6 @@ class Database
     {
         return $this->tableInfo;
     }
-    
     
     /**
      * @param \Pandora\Connection\Conn $conn
@@ -308,7 +300,6 @@ class Database
         return $rows;
     }
     
-    
     /**
      * @return array
      */
@@ -316,7 +307,6 @@ class Database
     {
         return $this->tables;
     }
-    
     
     /**
      * @param \Pandora\Connection\Conn $conn
@@ -334,7 +324,6 @@ class Database
         return $this;
     }
     
-    
     /**
      * @param \Pandora\Connection\Conn $conn
      *
@@ -346,7 +335,6 @@ class Database
         
         return $this;
     }
-    
     
     /**
      * @param $field

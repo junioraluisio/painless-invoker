@@ -8,8 +8,8 @@
 
 namespace Pandora\Database;
 
-
 use Pandora\Connection\Conn;
+use Pandora\Contracts\Connection\iConn;
 use Pandora\Contracts\Database\iDataManager;
 use Pandora\Contracts\Database\iDataObject;
 
@@ -179,13 +179,28 @@ class DataManager implements iDataManager
     }
     
     /**
-     * @param array $fieldsValues
-     *
+     * @return \Pandora\Contracts\Connection\iConn
+     */
+    public function getConn(): iConn
+    {
+        return $this->conn;
+    }
+    
+    /**
+     * @return \Pandora\Contracts\Database\iDataObject
+     */
+    public function getObject(): iDataObject
+    {
+        return $this->object;
+    }
+    
+    /**
      * @return array
      */
-    public function insert(array $fieldsValues): array
+    public function insert(): array
     {
-        $fields = array_keys($fieldsValues);
+        $data   = $this->extractData();
+        $fields = array_keys($data);
         
         $sql = 'INSERT INTO ' . $this->object->getTable();
         $sql .= ' (' . implode(', ', $fields) . ') ';
@@ -201,7 +216,7 @@ class DataManager implements iDataManager
         $sql .= implode(', ', $values);
         $sql .= ')';
         
-        $stmt = $this->statement($sql, $fieldsValues);
+        $stmt = $this->statement($sql, $data);
         
         if ($stmt['execute']) {
             $ret['response'] = true;

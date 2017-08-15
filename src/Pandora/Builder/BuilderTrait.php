@@ -98,73 +98,6 @@ trait BuilderTrait
     }
     
     /**
-     * @return string
-     */
-    public function getDatabase(): string
-    {
-        return $this->database;
-    }
-    
-    /**
-     * @return array informações fornecidas pelo próprio banco de dados
-     *         [name, position, value_default, isnull, type, length, numeric_precision, numeric_scale, datetime_precision, collation, field_key
-     *          extra, field_comment, expression, index_name, index_type, index_ref_schema, index_ref_table, index_ref_column_key, validate, validate_ref,
-     *          comment, insert, update, max_length, name_flag, method_get, method_set]
-     */
-    public function getFields(): array
-    {
-        return $this->fields;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getNameParameter(): string
-    {
-        return $this->nameParameter;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getNamespace(): string
-    {
-        return $this->namespace;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getNamespaceInterface(): string
-    {
-        return $this->namespaceInterface;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getPrefix(): string
-    {
-        return $this->prefix;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-    
-    /**
-     * @return string
-     */
-    public function getTableName(): string
-    {
-        return $this->tableName;
-    }
-    
-    /**
      * @param string $table
      *
      * @return $this
@@ -189,6 +122,14 @@ trait BuilderTrait
     }
     
     /**
+     * @return string
+     */
+    public function getDatabase(): string
+    {
+        return $this->database;
+    }
+    
+    /**
      * @param \Pandora\Database\Database $database
      *
      * @return $this
@@ -201,6 +142,17 @@ trait BuilderTrait
     }
     
     /**
+     * @return array informações fornecidas pelo próprio banco de dados
+     *         [name, position, value_default, isnull, type, length, numeric_precision, numeric_scale, datetime_precision, collation, field_key
+     *          extra, field_comment, expression, index_name, index_type, index_ref_schema, index_ref_table, index_ref_column_key, validate, validate_ref,
+     *          comment, insert, update, max_length, name_flag, method_get, method_set]
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+    
+    /**
      * @param array $fields
      *
      * @return $this
@@ -210,6 +162,14 @@ trait BuilderTrait
         $this->fields = $fields;
         
         return $this;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getNameParameter(): string
+    {
+        return $this->nameParameter;
     }
     
     /**
@@ -237,6 +197,14 @@ trait BuilderTrait
     }
     
     /**
+     * @return string
+     */
+    public function getNamespace(): string
+    {
+        return $this->namespace;
+    }
+    
+    /**
      * @return $this
      */
     public function setNamespace()
@@ -247,6 +215,14 @@ trait BuilderTrait
     }
     
     /**
+     * @return string
+     */
+    public function getNamespaceInterface(): string
+    {
+        return $this->namespaceInterface;
+    }
+    
+    /**
      * @return $this
      */
     public function setNamespaceInterface()
@@ -254,6 +230,14 @@ trait BuilderTrait
         $this->namespaceInterface = 'Entities\\Contracts\\' . $this->getTableName() . '\\' . $this->getClassName();
         
         return $this;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getPrefix(): string
+    {
+        return $this->prefix;
     }
     
     /**
@@ -273,6 +257,14 @@ trait BuilderTrait
     }
     
     /**
+     * @return string
+     */
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+    
+    /**
      * @param string $table
      *
      * @return $this
@@ -282,6 +274,14 @@ trait BuilderTrait
         $this->table = $table;
         
         return $this;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->tableName;
     }
     
     /**
@@ -350,22 +350,6 @@ trait BuilderTrait
     }
     
     /**
-     * @param $n
-     *
-     * @return string
-     */
-    private function idt($n): string
-    {
-        $ret = '';
-        
-        for ($i = $n; $i > 0; $i--) {
-            $ret .= " ";
-        }
-        
-        return $ret;
-    }
-    
-    /**
      * @param string $txt
      * @param int    $space número de espaços
      * @param int    $eol   número de linhas
@@ -374,7 +358,23 @@ trait BuilderTrait
      */
     private function line(string $txt, int $space, int $eol): string
     {
-        return $this->idt($space) . $txt . $this->eol($eol);
+        return $this->space($space) . $txt . $this->eol($eol);
+    }
+    
+    /**
+     * @param $n
+     *
+     * @return string
+     */
+    private function space($n): string
+    {
+        $ret = '';
+        
+        for ($i = $n; $i > 0; $i--) {
+            $ret .= " ";
+        }
+        
+        return $ret;
     }
     
     /**
@@ -409,5 +409,31 @@ trait BuilderTrait
         $this->write .= $text;
         
         return $text;
+    }
+    
+    private function maxLengthVars(array $fields): array
+    {
+        $lMax['insert'] = 0;
+        $lMax['update'] = 0;
+        
+        foreach ($fields as $key => $field) {
+            $insert = $field['insert'] ?? false;
+            $update = $field['update'] ?? false;
+            
+            $lengthName = $field['name_length'] ?? 0;
+            
+            if ($insert) {
+                $lMax['insert'] = ($lengthName > $lMax['insert']) ? $lengthName+1 : $lMax['insert'];
+            }
+            
+            if ($update) {
+                $lMax['update'] = ($lengthName > $lMax['update']) ? $lengthName+1 : $lMax['update'];
+            }
+        }
+        
+        $lMax['insert']++;
+        $lMax['update']++;
+        
+        return $lMax;
     }
 }

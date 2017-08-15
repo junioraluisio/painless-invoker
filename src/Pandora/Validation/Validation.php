@@ -10,8 +10,9 @@ namespace Pandora\Validation;
 
 
 use Pandora\Connection\Conn;
+use Pandora\Contracts\Validation\iValidation;
 
-class Validation
+class Validation implements iValidation
 {
     /**
      * @param mixed $bool
@@ -413,7 +414,7 @@ class Validation
         } else {
             $ret = [
                 'response' => false,
-                'message'  => 'Preencha um valor para o campo "' . $field . '"!'
+                'message'  => 'Preencha ou selecione um valor para o campo "' . $field . '"!'
             ];
         }
         
@@ -511,47 +512,11 @@ class Validation
      * @param string                   $table
      * @param string                   $field
      * @param string                   $value
-     *
-     * @return array
-     */
-    public function isUnique(Conn $conn, string $table, string $field, string $value): array
-    {
-        $sql = 'SELECT ' . $field;
-        $sql .= ' FROM ' . $table;
-        $sql .= ' WHERE ' . $field . ' = "' . $value . '"';
-        $sql .= ' LIMIT 1';
-        
-        $result = $conn->prepare($sql);
-        
-        $result->execute();
-        
-        $numRows = $result->rowCount();
-        
-        $ret = [
-            'response' => true,
-            'message'  => ''
-        ];
-        
-        if ($numRows > 0) {
-            $ret = [
-                'response' => false,
-                'message'  => 'O valor "' . $value . '" já existe no banco de dados e não pode ser duplicado!'
-            ];
-        }
-        
-        return $ret;
-    }
-    
-    /**
-     * @param \Pandora\Connection\Conn $conn
-     * @param string                   $table
-     * @param string                   $field
-     * @param string                   $value
      * @param string                   $id
      *
      * @return array
      */
-    public function isUniqueDiffId(Conn $conn, string $table, string $field, string $value, string $id): array
+    public function isUnique(Conn $conn, string $table, string $field, string $value, string $id): array
     {
         $arrPrefix = explode('_', $field);
         

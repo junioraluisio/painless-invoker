@@ -8,6 +8,7 @@
 
 namespace Pandora\Contracts\Database;
 
+use Pandora\Contracts\Connection\iConn;
 
 /**
  * Class DataManager
@@ -15,6 +16,16 @@ namespace Pandora\Contracts\Database;
  */
 interface iDataManager
 {
+    /**
+     * @return \Pandora\Contracts\Connection\iConn
+     */
+    public function getConn(): iConn;
+    
+    /**
+     * @return \Pandora\Contracts\Database\iDataObject
+     */
+    public function getObject(): iDataObject;
+    
     /**
      * @param string $fields
      *
@@ -59,7 +70,7 @@ interface iDataManager
      *
      * @return array
      */
-    public function insert(array $fieldsValues): array;
+    public function insert(): array;
     
     /**
      * @return array
