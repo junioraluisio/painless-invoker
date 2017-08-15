@@ -8,7 +8,6 @@
 
 namespace Pandora\Validation;
 
-
 use Pandora\Connection\Conn;
 use Pandora\Contracts\Validation\iValidation;
 
@@ -516,7 +515,7 @@ class Validation implements iValidation
      *
      * @return array
      */
-    public function isUnique(Conn $conn, string $table, string $field, string $value, string $id): array
+    public function isUnique(Conn $conn, string $table, string $field, string $value, string $id = ''): array
     {
         $arrPrefix = explode('_', $field);
         

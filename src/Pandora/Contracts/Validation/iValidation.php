@@ -99,7 +99,7 @@ interface iValidation
      *
      * @return array
      */
-    public function isUnique(Conn $conn, string $table, string $field, string $value, string $id): array;
+    public function isUnique(Conn $conn, string $table, string $field, string $value, string $id = ''): array;
     
     /**
      * @param string $url
