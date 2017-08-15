@@ -60,15 +60,12 @@ class BuilderActions
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @param \$request", 5, 1);
-        $text .= $this->line("* @param \$response", 5, 1);
-        $text .= $this->line("* @param \$args", 5, 1);
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function disable(\$request, \$response, \$args)", 4, 1);
+        $text .= $this->line("public function disable()", 4, 1);
         $text .= $this->line("{", 4, 1);
-        $text .= $this->line("\$id = \$args['ipt_id'] ?? '';", 8, 2);
+        $text .= $this->line("\$id = \$_REQUEST['ipt_id'] ?? '';", 8, 2);
         
         $objVar = $this->getNameParameter();
         $objGet = $this->getClassName();
@@ -93,15 +90,12 @@ class BuilderActions
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @param \$request", 5, 1);
-        $text .= $this->line("* @param \$response", 5, 1);
-        $text .= $this->line("* @param \$args", 5, 1);
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function enable(\$request, \$response, \$args)", 4, 1);
+        $text .= $this->line("public function enable()", 4, 1);
         $text .= $this->line("{", 4, 1);
-        $text .= $this->line("\$id = \$args['ipt_id'] ?? '';", 8, 2);
+        $text .= $this->line("\$id = \$_REQUEST['ipt_id'] ?? '';", 8, 2);
         
         $objVar = $this->getNameParameter();
         $objGet = $this->getClassName();
@@ -209,13 +203,57 @@ class BuilderActions
         return $text;
     }
     
+    private function writeInsert()
+    {
+        $text = "";
+        
+        $text .= $this->line("/**", 4, 1);
+        $text .= $this->line("*", 5, 1);
+        $text .= $this->line("* @return string", 5, 1);
+        $text .= $this->line("*/", 5, 1);
+        $text .= $this->line("public function insert()", 4, 1);
+        $text .= $this->line("{", 4, 1);
+        
+        $text .= $this->line($this->writeVars('insert'), 0, 1);
+        
+        //foreach das validações
+        $text .= $this->line($this->writeValidation('insert'), 0, 0);
+        
+        $text .= $this->line("\$error = 0;", 8, 2);
+        $text .= $this->line("\$msg = [];", 8, 2);
+        $text .= $this->line("foreach (\$check as \$item) {", 8, 1);
+        $text .= $this->line("\$error += (\$item['response'] === false) ? 1 : 0;", 12, 2);
+        $text .= $this->line("if (!empty(\$item['message'])) {", 12, 1);
+        $text .= $this->line("\$msg[] = \$item['message'];", 16, 1);
+        $text .= $this->line("}", 12, 2);
+        $text .= $this->line("}", 8, 2);
+        $text .= $this->line("if (\$error < 1) {", 8, 1);
+        $text .= $this->line("\$users = \$this->getUsers();", 12, 2);
+        
+        //foreach dos setters insert
+        $text .= $this->line($this->writeSetters('insert'), 0, 1);
+        
+        $text .= $this->line("\$dm = \$this->getDm();", 12, 1);
+        $text .= $this->line("\$dm->setObject(\$users);", 12, 2);
+        $text .= $this->line("\$op = \$dm->insert();", 12, 2);
+        $text .= $this->line("\$msg = \$op['message'];", 12, 1);
+        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 12, 1);
+        $text .= $this->line("}", 8, 2);
+        $text .= $this->line("return json_encode(\$msg);", 8, 1);
+        $text .= $this->line("}", 4, 2);
+        
+        $this->write .= $text;
+        
+        return $text;
+    }
+    
     private function writeStartClass()
     {
         $text = "";
         
         $obj = $this->getClassName();
         
-        $text .= $this->line("class " . $obj . "Actions", 0, 1);
+        $text .= $this->line("class " . $obj . "Actions implements iActions", 0, 1);
         $text .= $this->line("{", 0, 1);
         $text .= $this->line("/**", 4, 1);
         $text .= $this->line("* @var \\Pandora\\Contracts\\Connection\\iConn", 5, 1);
@@ -252,71 +290,21 @@ class BuilderActions
         return $text;
     }
     
-    private function writeInsert()
-    {
-        $text = "";
-        
-        $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @param \$request", 5, 1);
-        $text .= $this->line("* @param \$response", 5, 1);
-        $text .= $this->line("* @param \$args", 5, 1);
-        $text .= $this->line("*", 5, 1);
-        $text .= $this->line("* @return string", 5, 1);
-        $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function insert(\$request, \$response, \$args)", 4, 1);
-        $text .= $this->line("{", 4, 1);
-        
-        $text .= $this->line($this->writeVars('insert'), 0, 1);
-        
-        //foreach das validações
-        $text .= $this->line($this->writeValidation('insert'), 0, 0);
-        
-        $text .= $this->line("\$error = 0;", 8, 2);
-        $text .= $this->line("\$msg = [];", 8, 2);
-        $text .= $this->line("foreach (\$check as \$item) {", 8, 1);
-        $text .= $this->line("\$error += (\$item['response'] === false) ? 1 : 0;", 12, 2);
-        $text .= $this->line("if (!empty(\$item['message'])) {", 12, 1);
-        $text .= $this->line("\$msg[] = \$item['message'];", 16, 1);
-        $text .= $this->line("}", 12, 2);
-        $text .= $this->line("}", 8, 2);
-        $text .= $this->line("if (\$error < 1) {", 8, 1);
-        $text .= $this->line("\$users = \$this->getUsers();", 12, 2);
-        
-        //foreach dos setters insert
-        $text .= $this->line($this->writeSetters('insert'), 0, 1);
-        
-        $text .= $this->line("\$dm = \$this->getDm();", 12, 1);
-        $text .= $this->line("\$dm->setObject(\$users);", 12, 2);
-        $text .= $this->line("\$op = \$dm->insert();", 12, 2);
-        $text .= $this->line("\$msg = \$op['message'];", 12, 1);
-        $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 12, 1);
-        $text .= $this->line("}", 8, 2);
-        $text .= $this->line("return json_encode(\$msg);", 8, 1);
-        $text .= $this->line("}", 4, 2);
-        
-        $this->write .= $text;
-        
-        return $text;
-    }
-    
     private function writeUpdate()
     {
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @param \$request", 5, 1);
-        $text .= $this->line("* @param \$response", 5, 1);
-        $text .= $this->line("* @param \$args", 5, 1);
         $text .= $this->line("*", 5, 1);
         $text .= $this->line("* @return string", 5, 1);
         $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("public function update(\$request, \$response, \$args)", 4, 1);
+        $text .= $this->line("public function update()", 4, 1);
         $text .= $this->line("{", 4, 1);
         
         $maxLength = $this->maxLengthVars($this->getFields());
         $space     = $this->space($maxLength['update'] - 2);
         
-        $text .= $this->line("\$id" . $space . "= \$args['ipt_id'] ?? '';", 8, 1);
+        $text .= $this->line("\$id" . $space . "= \$_REQUEST['ipt_id'] ?? '';", 8, 1);
         $text .= $this->line($this->writeVars('update'), 0, 1);
         
         //foreach das validações
@@ -362,6 +350,7 @@ class BuilderActions
         
         $text .= $this->line("namespace App\Actions;", 0, 2);
         
+        $text .= $this->line("use Pandora\\Contracts\\Actions\\iActions;", 0, 1);
         $text .= $this->line("use Pandora\\Contracts\\Connection\\iConn;", 0, 1);
         $text .= $this->line("use Pandora\\Contracts\\Database\\iDataManager;", 0, 1);
         $text .= $this->line("use Pandora\\Contracts\\Validation\\iValidation;", 0, 1);
@@ -387,19 +376,19 @@ class BuilderActions
         
         switch ($validate) {
             case 'flag':
-                $line .= "isset(\$args['ipt_" . $validateRef . "']) ? flag(\$args['ipt_" . $validateRef . "']) : '';";
+                $line .= "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? flag(\$_REQUEST['ipt_" . $validateRef . "']) : '';";
                 break;
             case 'token_user':
-                $line .= "isset(\$args['ipt_" . $validateRef . "']) ? token_user('$validateRef', \$args['ipt_" . $validateRef . "']) : '';";
+                $line .= "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? token_user('$validateRef', \$_REQUEST['ipt_" . $validateRef . "']) : '';";
                 break;
             case 'password':
-                $line .= "isset(\$args['ipt_" . $nameFlag . "']) ? password(\$args['ipt_" . $nameFlag . "']) : '';";
+                $line .= "isset(\$_REQUEST['ipt_" . $nameFlag . "']) ? password(\$_REQUEST['ipt_" . $nameFlag . "']) : '';";
                 break;
             case 'date_automatic':
                 $line .= "date('Y-m-d H:i:s');";
                 break;
             default:
-                $line .= "\$args['ipt_$nameFlag'] ?? '';";
+                $line .= "\$_REQUEST['ipt_$nameFlag'] ?? '';";
         }
         
         return $this->line($line, 8, 1);
