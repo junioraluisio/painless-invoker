@@ -383,7 +383,7 @@ class DataManager implements iDataManager
      *
      * @return DataManager
      */
-    private function setObject($object): DataManager
+    public function setObject($object): DataManager
     {
         $this->object = $object;
         
