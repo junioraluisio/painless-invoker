@@ -296,7 +296,7 @@ class DataManager implements iDataManager
      */
     private function clearPrefix($field): string
     {
-        return str_replace($this->object->getPrefix()(), '', $field);
+        return str_replace($this->object->getPrefix(), '', $field);
     }
     
     /**
@@ -308,7 +308,11 @@ class DataManager implements iDataManager
         
         $methodsGet = $this->extractMethodsGet();
         
-        foreach ($methodsGet as $key => $method) {
+        $methodsGetProhibited = ['getTable','getPrefix'];
+        
+        $methodsGetAllow = array_diff($methodsGet,$methodsGetProhibited);
+        
+        foreach ($methodsGetAllow as $key => $method) {
             try {
                 if (!is_null($this->object->{$method}())) {
                     $data[$this->addPrefix($key)] = $this->object->{$method}();
@@ -402,7 +406,7 @@ class DataManager implements iDataManager
         
         foreach ($data as $key => $value) {
             if ($value !== null) {
-                $stmt->bindValue(':' . $this->clearPrefix($key), $value);
+                $stmt->bindValue(':' . $key, $value);
             }
         }
         
