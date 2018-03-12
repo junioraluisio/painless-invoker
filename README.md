@@ -3,10 +3,10 @@
 Invoker estabelece as classes do instalador do Painless, além de prover um maker de arquivos padrões para um software RESTFul.
 
 ## Terminal
-O Invoker possui um maker que permite ser ser executado via terminal para escrita de classes, actions, routes, middlewares, além de um arquivo index e htaccess padrões que permite a utilização do sistema de rotas do PHP Slim e o gerenciador de templates do Twig. 
+O Invoker possui um maker que permite ser executado via terminal para escrita de classes, actions, routes, middlewares, além de um arquivo index e htaccess padrões que permite a utilização do sistema de rotas do PHP Slim e o gerenciador de templates do Twig.
 
 ##### Comandos
->php invoker [actions | classes | routes | htaccess | index | middleware] [empty | tbale:<table_name> | name:<name>]
+>php invoker [actions | classes | routes | htaccess | index | middleware] [empty | table:<table_name> | name:<name>]
 
 _**Classes**_:
 > php invoker classes table:<table_name>
