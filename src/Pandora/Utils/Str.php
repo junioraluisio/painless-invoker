@@ -68,4 +68,37 @@ class Str
         return $string;
     }
     
+    function generatePassword($length, $capitalLetters = true, $numbers = true, $symbols = false)
+    {
+        // Caracteres de cada tipo
+        $lmin = 'abcdefghijklmnopqrstuvwxyz';
+        $lmai = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $num  = '1234567890';
+        $simb = '!@#$%*-';
+        
+        // Variáveis internas
+        $ret        = '';
+        $caracteres = '';
+        
+        // Agrupamos todos os caracteres que poderão ser utilizados
+        $caracteres .= $lmin;
+        
+        $caracteres .= $capitalLetters ? $lmai : '';
+        $caracteres .= $numbers ? $num : '';
+        $caracteres .= $symbols ? $simb : '';
+        
+        // Calculamos o total de caracteres possíveis
+        $len = strlen($caracteres);
+        
+        for ($n = 1; $n <= $length; $n++) {
+            // Criamos um número aleatório de 1 até $len para pegar um dos caracteres
+            $rand = mt_rand(1, $len);
+            
+            // Concatenamos um dos caracteres na variável $ret
+            $ret .= $caracteres[$rand - 1];
+        }
+        
+        return $ret;
+    }
+    
 }

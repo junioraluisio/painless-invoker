@@ -60,102 +60,6 @@ class BuilderSave
     }
     
     /**
-     * @param \Pandora\Builder\BuilderActionDisable $builder
-     *
-     * @return \Pandora\Builder\BuilderSave
-     */
-    public function saveActionDisable(BuilderActionDisable $builder): BuilderSave
-    {
-        $text  = $builder->write();
-        $name  = $builder->getNameParameter();
-        $class = $builder->getClassName();
-        
-        $dir = $this->pathApi . $class . '/';
-        
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-        
-        $file = $dir . $name . '_disable.php';
-        
-        $this->createSaveFile($file, $text);
-        
-        return $this;
-    }
-    
-    /**
-     * @param \Pandora\Builder\BuilderActionEnable $builder
-     *
-     * @return \Pandora\Builder\BuilderSave
-     */
-    public function saveActionEnable(BuilderActionEnable $builder): BuilderSave
-    {
-        $text  = $builder->write();
-        $name  = $builder->getNameParameter();
-        $class = $builder->getClassName();
-        
-        $dir = $this->pathApi . $class . '/';
-        
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-        
-        $file = $dir . $name . '_enable.php';
-        
-        $this->createSaveFile($file, $text);
-        
-        return $this;
-    }
-    
-    /**
-     * @param \Pandora\Builder\BuilderActionInsert $builder
-     *
-     * @return \Pandora\Builder\BuilderSave
-     */
-    public function saveActionInsert(BuilderActionInsert $builder): BuilderSave
-    {
-        $text  = $builder->write();
-        $name  = $builder->getNameParameter();
-        $class = $builder->getClassName();
-        
-        $dir = $this->pathApi . $class . '/';
-        
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-        
-        $file = $dir . $name . '_insert.php';
-        
-        $this->createSaveFile($file, $text);
-        
-        return $this;
-    }
-    
-    /**
-     * @param \Pandora\Builder\BuilderActionUpdate $builder
-     *
-     * @return \Pandora\Builder\BuilderSave
-     */
-    public function saveActionUpdate(BuilderActionUpdate $builder): BuilderSave
-    {
-        $text  = $builder->write();
-        $name  = $builder->getNameParameter();
-        $class = $builder->getClassName();
-        
-        $dir = $this->pathApi . $class . '/';
-        
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-        
-        $file = $dir . $name . '_update.php';
-        
-        $this->createSaveFile($file, $text);
-        
-        return $this;
-    }
-    
-    /**
      * @param \Pandora\Builder\BuilderApiIndex $builder
      *
      * @return \Pandora\Builder\BuilderSave
@@ -195,6 +99,28 @@ class BuilderSave
         }
         
         $file = $dir . $name . '.php';
+        
+        $this->createSaveFile($file, $text);
+        
+        return $this;
+    }
+    
+    /**
+     * @param \Pandora\Builder\BuilderEnv $builder
+     *
+     * @return \Pandora\Builder\BuilderSave
+     */
+    public function saveEnvFile(BuilderEnv $builder): BuilderSave
+    {
+        $text = $builder->write();
+        
+        $dir = './';
+        
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        
+        $file = $dir . '.env';
         
         $this->createSaveFile($file, $text);
         

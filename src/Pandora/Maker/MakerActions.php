@@ -12,6 +12,7 @@ namespace Pandora\Maker;
 use Pandora\Builder\BuilderActions;
 use Pandora\Builder\BuilderApiIndex;
 use Pandora\Builder\BuilderClass;
+use Pandora\Builder\BuilderEnv;
 use Pandora\Builder\BuilderHtaccess;
 use Pandora\Builder\BuilderMiddleware;
 use Pandora\Builder\BuilderRoutes;
@@ -49,6 +50,17 @@ class MakerActions
         $this->setName($name);
     }
     
+    public function env()
+    {
+        $builderEnv = new BuilderEnv();
+        
+        $this->save->saveEnvFile($builderEnv);
+        
+        Messages::console('Successfully created .env file!', 1, 1);
+        
+        return $this;
+    }
+    
     /**
      * @return $this
      */
@@ -58,7 +70,7 @@ class MakerActions
             Messages::exception('Set the database table!', 1, 2);
         }
         
-        $builderAction  = new BuilderActions($this->getDatabase());
+        $builderAction = new BuilderActions($this->getDatabase());
         
         $this->save->saveAction($builderAction);
         
@@ -137,7 +149,6 @@ class MakerActions
     
     public function routes()
     {
-        //print_r($this);
         if (empty($this->database->getTable())) {
             Messages::exception('Error: Set the database table!', 1, 2);
         }

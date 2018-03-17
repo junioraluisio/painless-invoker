@@ -22,6 +22,9 @@ _**Middlewares**_
 
 _**Arquivo  .htaccess**_:  
 > php invoker htaccess
+
+_**Arquivo  .env**_:  
+> php invoker env
   
 _**Arquivo index.php**_
 > php invoker index
