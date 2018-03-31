@@ -205,6 +205,9 @@ class BuilderActions
     
     private function writeInsert()
     {
+        $objVar = $this->getNameParameter();
+        $objGet = $this->getClassName();
+        
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
@@ -228,13 +231,13 @@ class BuilderActions
         $text .= $this->line("}", 12, 2);
         $text .= $this->line("}", 8, 2);
         $text .= $this->line("if (\$error < 1) {", 8, 1);
-        $text .= $this->line("\$users = \$this->getUsers();", 12, 2);
+        $text .= $this->line("\$$objVar = \$this->get$objGet();", 12, 2);
         
         //foreach dos setters insert
         $text .= $this->line($this->writeSetters('insert'), 0, 1);
         
         $text .= $this->line("\$dm = \$this->getDm();", 12, 1);
-        $text .= $this->line("\$dm->setObject(\$users);", 12, 2);
+        $text .= $this->line("\$dm->setObject(\$$objVar);", 12, 2);
         $text .= $this->line("\$op = \$dm->insert();", 12, 2);
         $text .= $this->line("\$msg = \$op['message'];", 12, 1);
         $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 12, 1);
@@ -274,7 +277,10 @@ class BuilderActions
         $objVar = $this->getNameParameter();
         
         $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @var \\App\\Entities\\Auth\\" . $obj, 5, 1);
+        
+        $nms  = 'App\\' . $this->getNamespace() . '\\' . $this->getClassName();
+        
+        $text .= $this->line("* @var \\" . $nms, 5, 1);
         $text .= $this->line("*/", 5, 1);
         $text .= $this->line("private \$" . $objVar . ";", 4, 2);
         
@@ -292,6 +298,9 @@ class BuilderActions
     
     private function writeUpdate()
     {
+        $objVar = $this->getNameParameter();
+        $objGet = $this->getClassName();
+        
         $text = "";
         
         $text .= $this->line("/**", 4, 1);
@@ -319,7 +328,7 @@ class BuilderActions
         $text .= $this->line("}", 12, 2);
         $text .= $this->line("}", 8, 2);
         $text .= $this->line("if (\$error < 1) {", 8, 1);
-        $text .= $this->line("\$users = \$this->getUsers();", 12, 2);
+        $text .= $this->line("\$$objVar = \$this->get$objGet();", 12, 2);
         
         $objVar = $this->getNameParameter();
         
@@ -328,7 +337,7 @@ class BuilderActions
         $text .= $this->line($this->writeSetters('update'), 0, 1);
         
         $text .= $this->line("\$dm = \$this->getDm();", 12, 2);
-        $text .= $this->line("\$dm->setObject(\$users);", 12, 2);
+        $text .= $this->line("\$dm->setObject(\$$objVar);", 12, 2);
         $text .= $this->line("\$op = \$dm->update();", 12, 2);
         $text .= $this->line("\$msg = \$op['message'];", 12, 1);
         $text .= $this->line("\$msg .= !empty(\$op['error_info']) ? ' :: ' . \$op['error_info'] : '';", 12, 1);
