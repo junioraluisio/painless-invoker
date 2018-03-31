@@ -9,10 +9,10 @@ O Invoker possui um maker que permite ser executado via terminal para escrita de
 >php invoker [actions | classes | routes | htaccess | index | middleware] [empty | table:<table_name> | name:<name>]
 
 _**Classes**_:
-> php invoker classes table:<table_name>
+> php invoker class table:<table_name>
 
 _**Actions**_:
-> php invoker actions table:<table_name>
+> php invoker action table:<table_name>
 
 _**Routes**_:
 > php invoker routes table:<table_name>
