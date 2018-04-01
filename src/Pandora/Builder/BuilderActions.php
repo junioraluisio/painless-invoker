@@ -119,13 +119,13 @@ class BuilderActions
     {
         $text = "";
         
-        $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @return mixed", 5, 1);
-        $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private function getConn()", 4, 1);
-        $text .= $this->line("{", 4, 1);
-        $text .= $this->line("return \$this->conn;", 8, 1);
-        $text .= $this->line("}", 4, 2);
+        //        $text .= $this->line("/**", 4, 1);
+        //        $text .= $this->line("* @return mixed", 5, 1);
+        //        $text .= $this->line("*/", 5, 1);
+        //        $text .= $this->line("private function getConn()", 4, 1);
+        //        $text .= $this->line("{", 4, 1);
+        //        $text .= $this->line("return \$this->conn;", 8, 1);
+        //        $text .= $this->line("}", 4, 2);
         
         $text .= $this->line("/**", 4, 1);
         $text .= $this->line("* @param \Pandora\Contracts\Connection\iConn \$conn", 5, 1);
@@ -273,23 +273,23 @@ class BuilderActions
         $text .= $this->line("*/", 5, 1);
         $text .= $this->line("private \$validation;", 4, 2);
         
-        $obj    = $this->getClassName() . '\\' . $this->getClassName();
+        //$obj    = $this->getClassName() . '\\' . $this->getClassName();
         $objVar = $this->getNameParameter();
         
         $text .= $this->line("/**", 4, 1);
         
-        $nms  = 'App\\' . $this->getNamespace() . '\\' . $this->getClassName();
+        $nms = 'App\\' . $this->getNamespace() . '\\' . $this->getClassName();
         
         $text .= $this->line("* @var \\" . $nms, 5, 1);
         $text .= $this->line("*/", 5, 1);
         $text .= $this->line("private \$" . $objVar . ";", 4, 2);
         
-        $table = $this->getTable();
-        
-        $text .= $this->line("/**", 4, 1);
-        $text .= $this->line("* @var string", 5, 1);
-        $text .= $this->line("*/", 5, 1);
-        $text .= $this->line("private \$table = '" . $table . "';", 4, 2);
+        //        $table = $this->getTable();
+        //
+        //        $text .= $this->line("/**", 4, 1);
+        //        $text .= $this->line("* @var string", 5, 1);
+        //        $text .= $this->line("*/", 5, 1);
+        //        $text .= $this->line("private \$table = '" . $table . "';", 4, 2);
         
         $this->write .= $text;
         
@@ -517,8 +517,8 @@ class BuilderActions
         $fields = $this->getFields();
         
         $text = "";
-        $text .= $this->line("\$validation = \$this->getValidation();", 8, 1);
-        $text .= $this->line("\$conn       = \$this->getConn();", 8, 2);
+        $text .= $this->line("\$validation = \$this->getValidation();", 8, 2);
+        //$text .= $this->line("\$conn       = \$this->getConn();", 8, 2);
         $text .= $this->line("\$check = [];", 8, 2);
         
         foreach ($fields as $field) {
