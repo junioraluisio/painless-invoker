@@ -42,8 +42,10 @@ class BuilderRoutes
     
     private function writeRouteIncludeExtra()
     {
+        $obj = $this->getClassName();
+        
         $text = $this->line("//Rotas extras", 0, 1);
-        $text .= $this->line("include 'UsersRoutesExtra.php';", 0, 0);
+        $text .= $this->line("include '" . $obj . "RoutesExtra.php';", 0, 0);
         
         return $text;
     }
