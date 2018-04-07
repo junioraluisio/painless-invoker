@@ -22,7 +22,7 @@ class Conn extends PDO implements iConn
     /**
      * @var null|\PDO
      */
-    public  $handle = null;
+    public $handle = null;
     
     /**
      * @var string
@@ -58,7 +58,7 @@ class Conn extends PDO implements iConn
      * @param string $password
      * @param string $driver
      */
-    function __construct(string $db, string $host, string $user, string $password, string $driver='MySQL')
+    function __construct(string $db, string $host, string $user, string $password, string $driver = 'MySQL')
     {
         $this->setDb($db);
         $this->setHost($host);
@@ -70,7 +70,7 @@ class Conn extends PDO implements iConn
         
         try {
             if ($this->handle == null) {
-                $dbh = parent::__construct($this->dsn, $this->user, $this->password);
+                $dbh = parent::__construct($this->dsn, $this->user, $this->password, [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"]);
                 
                 $this->handle = $dbh;
                 
