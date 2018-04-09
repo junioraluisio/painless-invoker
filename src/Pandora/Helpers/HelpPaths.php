@@ -21,7 +21,7 @@ if (!function_exists('path_web')) {
      */
     function path_web()
     {
-        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']);
+        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ? str_replace('/', '\\', $_SERVER['DOCUMENT_ROOT']) : '';
         
         $root = str_replace($documentRoot, '', dirname(__DIR__, 3));
         
