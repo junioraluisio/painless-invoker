@@ -42,10 +42,12 @@ class BuilderActions
         
         $text = "";
         
+        $objVar = $this->getNameParameter();
+        
         $text .= $this->line("public function __construct(\$container)", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$this->setValidation(\$container['validation']);", 8, 1);
-        $text .= $this->line("\$this->setDm(\$container['dm']);", 8, 1);
+        $text .= $this->line("\$this->setDm(\$container['dm_$objVar']);", 8, 1);
         $text .= $this->line("\$this->setConn(\$container['conn']);", 8, 1);
         $text .= $this->line("\$this->set" . $obj . "(\$this->dm->getObject());", 8, 1);
         $text .= $this->line("}", 4, 2);
@@ -284,12 +286,12 @@ class BuilderActions
         $text .= $this->line("*/", 5, 1);
         $text .= $this->line("private \$" . $objVar . ";", 4, 2);
         
-        //        $table = $this->getTable();
-        //
-        //        $text .= $this->line("/**", 4, 1);
-        //        $text .= $this->line("* @var string", 5, 1);
-        //        $text .= $this->line("*/", 5, 1);
-        //        $text .= $this->line("private \$table = '" . $table . "';", 4, 2);
+        $table = $this->getTable();
+        
+        $text .= $this->line("/**", 4, 1);
+        $text .= $this->line("* @var string", 5, 1);
+        $text .= $this->line("*/", 5, 1);
+        $text .= $this->line("private \$table = '" . $table . "';", 4, 2);
         
         $this->write .= $text;
         
@@ -374,10 +376,11 @@ class BuilderActions
     
     protected function writeArgs(array $field, int $lengthMax)
     {
-        $validate    = $field['validate'] ?? null;
-        $validateRef = $field['validate_ref'] ?? null;
-        $nameFlag    = $field['name_flag'] ?? 'err';
-        $nameLength  = $field['name_length'] ?? 0;
+        $validate     = $field['validate'] ?? null;
+        $validateRef  = $field['validate_ref'] ?? null;
+        $nameFlag     = $field['name_flag'] ?? 'err';
+        $nameLength   = $field['name_length'] ?? 0;
+        $valueDefault = $field['value_default'] ?? '';
         
         $length = $lengthMax - $nameLength;
         
@@ -385,19 +388,19 @@ class BuilderActions
         
         switch ($validate) {
             case 'flag':
-                $line .= "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? flag(\$_REQUEST['ipt_" . $validateRef . "']) : '';";
+                $line .= "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? flag(\$_REQUEST['ipt_" . $validateRef . "']) : $valueDefault;";
                 break;
             case 'token_user':
-                $line .= "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? token_user('$validateRef', \$_REQUEST['ipt_" . $validateRef . "']) : '';";
+                $line .= "isset(\$_REQUEST['ipt_" . $validateRef . "']) ? token_user('$validateRef', \$_REQUEST['ipt_" . $validateRef . "']) : $valueDefault;";
                 break;
             case 'password':
-                $line .= "isset(\$_REQUEST['ipt_" . $nameFlag . "']) ? password(\$_REQUEST['ipt_" . $nameFlag . "']) : '';";
+                $line .= "isset(\$_REQUEST['ipt_" . $nameFlag . "']) ? password(\$_REQUEST['ipt_" . $nameFlag . "']) : $valueDefault;";
                 break;
             case 'date_automatic':
                 $line .= "date('Y-m-d H:i:s');";
                 break;
             default:
-                $line .= "\$_REQUEST['ipt_$nameFlag'] ?? '';";
+                $line .= "\$_REQUEST['ipt_$nameFlag'] ?? $valueDefault;";
         }
         
         return $this->line($line, 8, 1);
@@ -490,7 +493,7 @@ class BuilderActions
         if (!empty($indexType)) {
             switch ($indexType) {
                 case 'UNIQUE':
-                    $line = "array_push(\$check, \$validation->isUnique(\$conn, \$this->table, '" . $name . "', $" . $nameFlag . "));";
+                    $line = "array_push(\$check, \$validation->isUnique(\$this->conn, \$this->table, '" . $name . "', $" . $nameFlag . "));";
                     break;
                 default:
                     $line = "";
@@ -524,13 +527,16 @@ class BuilderActions
         foreach ($fields as $field) {
             $insert = isset($field['insert']) ? $field['insert'] : false;
             $update = isset($field['update']) ? $field['update'] : false;
+            $extra  = $field['extra'] ?? '';
             
-            if ($insert && $action == 'insert') {
-                $text .= $this->writeValidates($field);
-            }
-            
-            if ($update && $action == 'update') {
-                $text .= $this->writeValidates($field);
+            if ($extra != 'auto_increment') {
+                if ($insert && $action == 'insert') {
+                    $text .= $this->writeValidates($field);
+                }
+                
+                if ($update && $action == 'update') {
+                    $text .= $this->writeValidates($field);
+                }
             }
         }
         

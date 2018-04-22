@@ -11,7 +11,7 @@
     }
   ],
   "autoload": {
-    "files":[
+    "files": [
       "src/Pandora/Helpers/HelpString.php",
       "src/Pandora/Helpers/HelpArray.php",
       "src/Pandora/Helpers/HelpPaths.php"
@@ -27,5 +27,8 @@
     "vlucas/phpdotenv": "^2.4",
     "twig/twig": "^2.3",
     "phpunit/phpunit": "^6.1"
+  },
+  "require": {
+    "twig/extensions": "^1.5"
   }
 }

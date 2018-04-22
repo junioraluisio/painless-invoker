@@ -57,7 +57,7 @@ class BuilderRoutes
         
         $text = "";
         
-        $text .= $this->line("\$container['dm'] = function (\$c) {", 0, 1);
+        $text .= $this->line("\$container['dm_$objVar'] = function (\$c) {", 0, 1);
         $text .= $this->line("\$$objVar = new " . $obj . "();", 4, 2);
         $text .= $this->line("return new DataManager(\$c['conn'], \$$objVar);", 4, 1);
         $text .= $this->line("};", 0, 2);
