@@ -380,7 +380,7 @@ class BuilderActions
         $validateRef  = $field['validate_ref'] ?? null;
         $nameFlag     = $field['name_flag'] ?? 'err';
         $nameLength   = $field['name_length'] ?? 0;
-        $valueDefault = $field['value_default'] ?? "''";
+        $valueDefault = "'" . $field['value_default'] . "'" ?? "''";
         
         $length = $lengthMax - $nameLength;
         
