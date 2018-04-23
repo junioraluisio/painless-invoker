@@ -26,7 +26,7 @@ class Maker
     /**
      * @var array
      */
-    private $methods = ['actions', 'classes', 'htaccess', 'index', 'middleware'];
+    private $methods = ['action', 'class', 'htaccess', 'index', 'middleware', 'forms'];
     
     /**
      * Maker constructor.

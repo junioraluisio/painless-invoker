@@ -21,7 +21,6 @@ class BuilderActions
      */
     public function write(): string
     {
-        
         $this->writeHead();
         $this->writeUses();
         $this->writeStartClass();

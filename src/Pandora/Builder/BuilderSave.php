@@ -25,15 +25,22 @@ class BuilderSave
     private $pathApp;
     
     /**
+     * @var string com o caminho principal para armazenamento das views geradas
+     */
+    private $pathAssets;
+    
+    /**
      * BuilderSave constructor.
      *
      * @param string $pathApp
      * @param string $pathApi
+     * @param string $pathAssets
      */
-    public function __construct($pathApp, $pathApi)
+    public function __construct(string $pathApp, string $pathApi, string $pathAssets)
     {
-        $this->pathApp = $pathApp;
-        $this->pathApi = $pathApi;
+        $this->pathApp    = $pathApp;
+        $this->pathApi    = $pathApi;
+        $this->pathAssets = $pathAssets;
     }
     
     /**
@@ -53,6 +60,30 @@ class BuilderSave
         }
         
         $file = $dir . $name . 'Actions.php';
+        
+        $this->createSaveFile($file, $text);
+        
+        return $this;
+    }
+    
+    /**
+     * @param \Pandora\Builder\BuilderForms $builder
+     * @param string                        $action
+     *
+     * @return \Pandora\Builder\BuilderSave
+     */
+    public function saveForms(BuilderForms $builder, string $action): BuilderSave
+    {
+        $text = $builder->write($action);
+        $name = $builder->getClassName();
+        
+        $dir = $this->pathAssets . '/views/admin/forms/';
+        
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        
+        $file = $dir . 'form_' . strtolower($name) . '_' . $action . '.html';
         
         $this->createSaveFile($file, $text);
         

@@ -19,6 +19,7 @@ use Pandora\Builder\BuilderRoutes;
 use Pandora\Builder\BuilderSave;
 use Pandora\Database\Database;
 use Pandora\Utils\Messages;
+use Pandora\Builder\BuilderForms;
 
 
 class MakerActions
@@ -101,11 +102,12 @@ class MakerActions
         $cmdHelp .= 'invoker [' . implode(' | ', $methods) . '] ';
         $cmdHelp .= '[empty | -t <table_name> | -n <name>]' . PHP_EOL . PHP_EOL;
         $cmdHelp .= 'Examples: ' . PHP_EOL . PHP_EOL;
-        $cmdHelp .= '  # invoker make:actions table:<table_name>' . PHP_EOL;
-        $cmdHelp .= '  # invoker make:classes table:<table_name>' . PHP_EOL;
-        $cmdHelp .= '  # invoker make:htaccess' . PHP_EOL;
-        $cmdHelp .= '  # invoker make:index' . PHP_EOL;
-        $cmdHelp .= '  # invoker make:middleware name:<middleware_name>' . PHP_EOL;
+        $cmdHelp .= '  # invoker action table:<table_name>' . PHP_EOL;
+        $cmdHelp .= '  # invoker class table:<table_name>' . PHP_EOL;
+        $cmdHelp .= '  # invoker view table:<table_name>' . PHP_EOL;
+        $cmdHelp .= '  # invoker htaccess' . PHP_EOL;
+        $cmdHelp .= '  # invoker index' . PHP_EOL;
+        $cmdHelp .= '  # invoker middleware name:<middleware_name>' . PHP_EOL;
         
         return $cmdHelp;
     }
@@ -158,6 +160,24 @@ class MakerActions
         $this->save->saveRoutes($builderRoute);
         
         Messages::console('Route created successfully!', 1, 1);
+        
+        return $this;
+    }
+    
+    public function forms(){
+        if (empty($this->database->getTable())) {
+            Messages::exception('Set the database table!', 1, 2);
+        }
+        
+        $forms = ['insert', 'update'];
+        
+        foreach ($forms as $form){
+            $builderForms = new BuilderForms($this->getDatabase());
+    
+            $this->save->saveForms($builderForms, $form);
+            
+            Messages::console('Form ' . $form . ' created successfully!', 1, 1);
+        }
         
         return $this;
     }
