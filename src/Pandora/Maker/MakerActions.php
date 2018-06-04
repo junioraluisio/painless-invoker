@@ -44,9 +44,11 @@ class MakerActions
      * @param \Pandora\Database\Database   $database
      * @param string                       $name
      */
-    public function __construct(BuilderSave $save, Database $database, string $name)
+    public function __construct(BuilderSave $save, $database, string $name)
     {
-        $this->setDatabase($database);
+        if(!is_null($database)) {
+            $this->setDatabase($database);
+        }
         $this->setSave($save);
         $this->setName($name);
     }

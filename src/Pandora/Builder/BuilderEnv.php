@@ -20,8 +20,9 @@ class BuilderEnv
      */
     public function write(): string
     {
-        $write = $this->writeDatabase();
-        $write .= $this->writeSession();
+        $write = $this->writeSystem();
+        $write .= $this->writeDatabase();
+        $write .= $this->writeMail();
         $write .= $this->writeTemplatesFolders();
         $write .= $this->writeTokenInformation();
         $write .= $this->writePathsAuth();
@@ -38,18 +39,6 @@ class BuilderEnv
         $text .= $this->line("DB_NAME=", 0, 1);
         $text .= $this->line("DB_USER=", 0, 1);
         $text .= $this->line("DB_PASS=", 0, 2);
-        
-        return $text;
-    }
-    
-    private function writeSession()
-    {
-        $objStr = new Str();
-        
-        $session = $objStr->generatePassword(16);
-        
-        $text = $this->line("# Session", 0, 1);
-        $text .= $this->line("SESSION_NAME=$session", 0, 2);
         
         return $text;
     }
@@ -85,6 +74,34 @@ class BuilderEnv
         $text = $this->line("# Paths Auth", 0, 1);
         $text .= $this->line("PATH_PROTECTED=/api|/app", 0, 1);
         $text .= $this->line("PATH_PASSTHROUGH=/auth", 0, 2);
+        
+        return $text;
+    }
+    
+    private function writeMail()
+    {
+        $text = $this->line("# Configuration Mail", 0, 1);
+        $text .= $this->line("MAIL_SMTP_HOST=smtp.smtp1.domain.com;smtp2.domain.com", 0, 1);
+        $text .= $this->line("MAIL_SMTP_AUTH=true", 0, 1);
+        $text .= $this->line("MAIL_SMTP_USER=painless@domain.com", 0, 1);
+        $text .= $this->line("MAIL_SMTP_PASSWORD=password", 0, 1);
+        $text .= $this->line("MAIL_SMTP_SECURE=tls", 0, 1);
+        $text .= $this->line("MAIL_SMTP_PORT=587", 0, 1);
+        $text .= $this->line("MAIL_FROM=painless@domain.com", 0, 1);
+        $text .= $this->line("MAIL_FROM_NAME=Painless", 0, 2);
+        
+        return $text;
+    }
+    
+    private function writeSystem()
+    {
+        $objStr = new Str();
+        
+        $session = $objStr->generatePassword(16);
+        
+        $text = $this->line("# System", 0, 1);
+        $text .= $this->line("APP_NAME=Painless", 0, 1);
+        $text .= $this->line("SESSION_NAME=$session", 0, 2);
         
         return $text;
     }
