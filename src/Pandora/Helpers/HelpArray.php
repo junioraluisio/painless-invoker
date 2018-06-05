@@ -14,3 +14,31 @@ if (!function_exists('lastItemArray')) {
         return ($end == $item) ? true : false;
     }
 }
+
+/**
+ * http://php.net/manual/pt_BR/function.shuffle.php
+ */
+if (!function_exists('keyShuffle')) {
+    function keyShuffle(&$array)
+    {
+        if (!is_array($array) || empty($array)) {
+            return false;
+        }
+        
+        $tmp = [];
+        
+        foreach ($array as $key => $value) {
+            $tmp[] = ['k' => $key, 'v' => $value];
+        }
+        
+        shuffle($tmp);
+        
+        $array = [];
+        
+        foreach ($tmp as $entry) {
+            $array[$entry['k']] = $entry['v'];
+        }
+        
+        return true;
+    }
+}
