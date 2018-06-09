@@ -25,10 +25,14 @@ class Send implements iSend
      * Send constructor.
      *
      * @param \PHPMailer\PHPMailer\PHPMailer $PHPMailer
+     *
+     * @throws \PHPMailer\PHPMailer\Exception
      */
     public function __construct(PHPMailer $PHPMailer)
     {
         $this->mail = $PHPMailer;
+        
+        $this->setup();
     }
     
     /**
@@ -45,18 +49,7 @@ class Send implements iSend
         $this->checkMail($mail['box']);
         
         try {
-            //Server settings
-            $this->mail->SMTPDebug = 2;
-            $this->mail->isSMTP();
-            $this->mail->Host       = $_ENV['MAIL_SMTP_HOST'];
-            $this->mail->SMTPAuth   = $_ENV['MAIL_SMTP_AUTH'];
-            $this->mail->Username   = $_ENV['MAIL_SMTP_USER'];
-            $this->mail->Password   = $_ENV['MAIL_SMTP_PASSWORD'];
-            $this->mail->SMTPSecure = $_ENV['MAIL_SMTP_SECURE'];
-            $this->mail->Port       = $_ENV['MAIL_SMTP_PORT'];
-            
             //Recipients
-            $this->mail->setFrom($_ENV['MAIL_FROM'], $_ENV['MAIL_FROM_NAME']);
             $this->mail->addAddress($mail['box'], $mail['name']);
             
             //Content
@@ -81,5 +74,38 @@ class Send implements iSend
         if (empty($email)) {
             Messages::exception('Digite uma senha!');
         }
+    }
+    
+    /**
+     * @throws \PHPMailer\PHPMailer\Exception
+     */
+    public function setup()
+    {
+        //Server settings
+        $this->mail->SMTPDebug = $_ENV['MAIL_DEBUG'];
+        
+        switch ($_ENV['MAIL_MAILER']) {
+            case 'sendmail':
+                $this->mail->isSendmail();
+                break;
+            case 'mail':
+                $this->mail->isMail();
+                break;
+            case 'qmail':
+                $this->mail->isQmail();
+                break;
+            default:
+                $this->mail->isSMTP();
+        }
+        
+        $this->mail->Host       = $_ENV['MAIL_SMTP_HOST'];
+        $this->mail->SMTPAuth   = $_ENV['MAIL_SMTP_AUTH'];
+        $this->mail->Username   = $_ENV['MAIL_SMTP_USER'];
+        $this->mail->Password   = $_ENV['MAIL_SMTP_PASSWORD'];
+        $this->mail->SMTPSecure = $_ENV['MAIL_SMTP_SECURE'];
+        $this->mail->Port       = $_ENV['MAIL_SMTP_PORT'];
+        
+        //Recipients
+        $this->mail->setFrom($_ENV['MAIL_FROM'], $_ENV['MAIL_FROM_NAME']);
     }
 }
