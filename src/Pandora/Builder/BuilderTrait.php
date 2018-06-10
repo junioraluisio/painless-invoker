@@ -37,6 +37,11 @@ trait BuilderTrait
     private $nameParameter;
     
     /**
+     * @var string com o apelido do parâmetro
+     */
+    private $nickParameter;
+    
+    /**
      * @var string com o namespace da classe
      */
     private $namespace;
@@ -81,6 +86,7 @@ trait BuilderTrait
                  ->setTable($tbl)
                  ->setTableName($tbl)
                  ->setNameParameter($tbl)
+                 ->setNickParameter($tbl)
                  ->setClassName($tbl)
                  ->setNamespace()
                  ->setNamespaceInterface()
@@ -173,6 +179,14 @@ trait BuilderTrait
     }
     
     /**
+     * @return string
+     */
+    public function getNickParameter(): string
+    {
+        return $this->nickParameter;
+    }
+    
+    /**
      * @param string $table
      *
      * @return $this
@@ -188,10 +202,34 @@ trait BuilderTrait
         for ($i = 1; $i <= $count; $i++) {
             $subName = isset($arrTableName[$i]) ? $arrTableName[$i] : '';
             
-            $nameParameter .= $subName;
+            $nameParameter .= $i > 1 ? ucfirst($subName) : $subName;
         }
         
         $this->nameParameter = $nameParameter;
+        
+        return $this;
+    }
+    
+    /**
+     * @param string $table
+     *
+     * @return $this
+     */
+    public function setNickParameter(string $table)
+    {
+        $arrTableName = explode('_', $table);
+        
+        $count = count($arrTableName);
+        
+        $nickParameter = '';
+        
+        for ($i = 1; $i <= $count-1; $i++) {
+            $subName = isset($arrTableName[$i]) ? $arrTableName[$i] : '';
+            
+            $nickParameter .= $i > 1 ? '_' . $subName : $subName;
+        }
+        
+        $this->nickParameter = $nickParameter;
         
         return $this;
     }

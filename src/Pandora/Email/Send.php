@@ -11,6 +11,7 @@ namespace Pandora\Email;
 
 use Pandora\Contracts\Email\iSend;
 use Pandora\Utils\Messages;
+use Pandora\Validation\Validation;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -22,15 +23,22 @@ class Send implements iSend
     private $mail;
     
     /**
+     * @var
+     */
+    private $validation;
+    
+    /**
      * Send constructor.
      *
      * @param \PHPMailer\PHPMailer\PHPMailer $PHPMailer
+     * @param \Pandora\Validation\Validation $validation
      *
      * @throws \PHPMailer\PHPMailer\Exception
      */
-    public function __construct(PHPMailer $PHPMailer)
+    public function __construct(PHPMailer $PHPMailer, Validation $validation)
     {
-        $this->mail = $PHPMailer;
+        $this->mail       = $PHPMailer;
+        $this->validation = $validation;
         
         $this->setup();
     }
@@ -72,7 +80,11 @@ class Send implements iSend
     public function checkMail(string $email)
     {
         if (empty($email)) {
-            Messages::exception('Digite uma senha!');
+            Messages::exception('Digite um email!');
+        }
+        
+        if(!$this->validation->isEmail($email)){
+            Messages::exception('Formato de email inválido!');
         }
     }
     
