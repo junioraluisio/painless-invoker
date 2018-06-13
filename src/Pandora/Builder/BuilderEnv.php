@@ -64,7 +64,9 @@ class BuilderEnv
         $text .= $this->line("JWT_ISSUER=", 0, 1);
         $text .= $this->line("JWT_AUDIENCE=", 0, 1);
         $text .= $this->line("JWT_ID=$jwtId", 0, 1);
-        $text .= $this->line("JWT_SECRET=$jwtSecret", 0, 2);
+        $text .= $this->line("JWT_SECRET=$jwtSecret", 0, 1);
+        $text .= $this->line("JWT_PATH_PROTECTED=/api|/app", 0, 2);
+        $text .= $this->line("JWT_PATH_PASSTHROUGH=/auth", 0, 0);
         
         return $text;
     }
