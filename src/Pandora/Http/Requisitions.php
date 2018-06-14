@@ -12,19 +12,21 @@ namespace Pandora\Http;
 class Requisitions
 {
     /**
-     * @var string com a url que será consumida
-     */
-    private $url;
-    
-    /**
      * @var
      */
     private $ch;
-    
+    /**
+     * @var array
+     */
+    private $fields;
     /**
      * @var string [GET, POST]
      */
     private $type;
+    /**
+     * @var string com a url que será consumida
+     */
+    private $url;
     
     /**
      * Requisitions constructor.
@@ -33,40 +35,81 @@ class Requisitions
      * @param string $type
      * @param array  $fields
      */
-    public function __construct(string $url, string $type, array $fields)
+    public function __construct()
     {
-        $this->type = $type;
-        
         $this->ch = curl_init();
-        curl_setopt($this->ch, CURLOPT_URL, $url);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields);
-        curl_setopt($this->ch, $this->setType($type), true);
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($this->ch);
+    }
+    
+    /**
+     * @param string $url
+     * @param string $type
+     * @param array  $fields
+     *
+     * @return mixed
+     */
+    public function exec(string $url, string $type, array $fields)
+    {
+        $this->setUrl($url);
+        $this->setType($type);
+        $this->setFields($fields);
         
-        return $result;
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        
+        $exec = curl_exec($this->ch);
+        
+        return $exec;
     }
     
     /**
      * @param string $type
      *
-     * @return int
+     * @return Requisitions
      */
-    private function setType(string $type)
+    public function setType(string $type): Requisitions
     {
         switch ($type) {
             case 'post':
-                $ret = CURLOPT_POST;
+                $this->type = CURLOPT_POST;
                 break;
             default:
-                $ret = CURLOPT_HTTPGET;
+                $this->type = CURLOPT_HTTPGET;
         }
         
-        return $ret;
+        curl_setopt($this->ch, $this->type, true);
+        
+        return $this;
     }
     
     public function __destruct()
     {
         curl_close($this->ch);
+    }
+    
+    /**
+     * @param array $fields
+     *
+     * @return Requisitions
+     */
+    public function setFields(array $fields): Requisitions
+    {
+        $this->fields = $fields;
+        
+        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $fields);
+        
+        return $this;
+    }
+    
+    /**
+     * @param string $url
+     *
+     * @return Requisitions
+     */
+    public function setUrl(string $url): Requisitions
+    {
+        $this->url = $url;
+        
+        curl_setopt($this->ch, CURLOPT_URL, $url);
+        
+        return $this;
     }
 }

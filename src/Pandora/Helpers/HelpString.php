@@ -116,7 +116,7 @@ if (!function_exists('flag')) {
     }
 }
 
-if (!function_exists('deKrypt')) {
+if (!function_exists('krypt')) {
     /**
      * simple method to encrypt or decrypt a plain text string
      * initialization vector(IV) has to be the same when encrypting and decrypting
@@ -126,7 +126,7 @@ if (!function_exists('deKrypt')) {
      *
      * @return string
      */
-    function deKrypt($action, $string)
+    function krypt($action, $string)
     {
         $output         = false;
         $encrypt_method = "AES-256-CBC";

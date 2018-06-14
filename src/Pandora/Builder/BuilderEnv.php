@@ -83,6 +83,8 @@ class BuilderEnv
     private function writeMail()
     {
         $text = $this->line("# Configuration Mail", 0, 1);
+        $text .= $this->line("MAIL_DEBUG=0", 0, 1);
+        $text .= $this->line("MAIL_MAILER=sendmail", 0, 1);
         $text .= $this->line("MAIL_SMTP_HOST=smtp.smtp1.domain.com;smtp2.domain.com", 0, 1);
         $text .= $this->line("MAIL_SMTP_AUTH=true", 0, 1);
         $text .= $this->line("MAIL_SMTP_USER=painless@domain.com", 0, 1);

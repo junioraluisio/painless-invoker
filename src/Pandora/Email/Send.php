@@ -44,15 +44,14 @@ class Send implements iSend
     }
     
     /**
-     * @param array  $mail           Array com as informações do email que receberá a mensagem $mail['box'], $mail['name']
-     * @param string $subject        Assunto do email
-     * @param string $bodyHtml       Texto do email em HTML
-     * @param string $bodyNoHtml     Texto do email sem tags HTML
-     * @param string $messageSuccess Mensagem de retorno em caso de sucesso
+     * @param array  $mail
+     * @param string $subject
+     * @param string $bodyHtml
+     * @param string $bodyNoHtml
      *
-     * @return string
+     * @return array|mixed
      */
-    public function simple(array $mail, string $subject, string $bodyHtml, string $bodyNoHtml, string $messageSuccess)
+    public function simple(array $mail, string $subject, string $bodyHtml, string $bodyNoHtml)
     {
         $this->checkMail($mail['box']);
         
@@ -68,9 +67,9 @@ class Send implements iSend
             
             $this->mail->send();
             
-            return $messageSuccess;
+            return [true, 'Email enviado com sucesso!'];
         } catch (Exception $e) {
-            return 'O e-mail não pode ser enviado. Error: ' . $this->mail->ErrorInfo;
+            return [false, 'O e-mail não pode ser enviado. Error: ' . $this->mail->ErrorInfo];
         }
     }
     
@@ -83,7 +82,7 @@ class Send implements iSend
             Messages::exception('Digite um email!');
         }
         
-        if(!$this->validation->isEmail($email)){
+        if (!$this->validation->isEmail($email)) {
             Messages::exception('Formato de email inválido!');
         }
     }

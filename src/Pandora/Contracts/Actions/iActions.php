@@ -11,16 +11,18 @@ namespace Pandora\Contracts\Actions;
 interface iActions
 {
     /**
+     * @param array $parameters
      *
-     * @return string
+     * @return mixed
      */
-    public function insert();
+    public function insert(array $parameters = []);
     
     /**
+     * @param array $parameters
      *
-     * @return string
+     * @return mixed
      */
-    public function update();
+    public function update(array $parameters = []);
     
     /**
      *
