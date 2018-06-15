@@ -138,16 +138,22 @@ class Database
         foreach ($rows as $row) {
             $colName = isset($row['name']) ? $row['name'] : '';
             
+            $arrComment = json_decode(utf8_encode($row['field_comment']), true);
+            
+            $length = !empty($row['length']) ? $row['length'] : $row['numeric_precision'] . ',' . $row['numeric_scale'];
+            
+            $name_flag = $this->fieldNameWithoutPrefix($colName);
+            
             $fields[$colName] = $row;
             
+            // Informações extraídas da tabela no banco de dados
             $fields[$colName]['index_name']           = $indexes[$colName]['index_name'] ?? null;
             $fields[$colName]['index_type']           = $indexes[$colName]['index_type'] ?? null;
             $fields[$colName]['index_ref_schema']     = $indexes[$colName]['index_ref_schema'] ?? null;
             $fields[$colName]['index_ref_table']      = $indexes[$colName]['index_ref_table'] ?? null;
             $fields[$colName]['index_ref_column_key'] = $indexes[$colName]['index_ref_column_key'] ?? null;
             
-            $arrComment = json_decode(utf8_encode($row['field_comment']), true);
-            
+            // Informações extraídas do campo comentário do banco de dados
             $fields[$colName]['name_msg']     = $arrComment['name_msg'] ?? null;
             $fields[$colName]['validate']     = $arrComment['validate'] ?? null;
             $fields[$colName]['validate_ref'] = $arrComment['validate_ref'] ?? null;
@@ -155,12 +161,8 @@ class Database
             $fields[$colName]['insert']       = $arrComment['insert'] ?? null;
             $fields[$colName]['update']       = $arrComment['update'] ?? null;
             
-            $length = !empty($row['length']) ? $row['length'] : $row['numeric_precision'] . ',' . $row['numeric_scale'];
-            
+            // Informações setadas com base nas informações extraída na tabela
             $fields[$colName]['max_length'] = $length;
-            
-            $name_flag = $this->fieldNameWithoutPrefix($colName);
-            
             $fields[$colName]['name_flag']   = $name_flag;
             $fields[$colName]['name_length'] = strlen($name_flag);
             $fields[$colName]['method_get']  = 'get' . ucfirst($name_flag) . '()';

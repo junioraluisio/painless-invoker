@@ -25,14 +25,26 @@ interface iActions
     public function update(array $parameters = []);
     
     /**
+     * @param array $parameters
      *
-     * @return string
+     * @return mixed
      */
-    public function disable();
+    public function disable(array $parameters = []);
     
     /**
+     * @param array $parameters
      *
-     * @return string
+     * @return mixed
      */
-    public function enable();
+    public function enable(array $parameters = []);
+    
+    /**
+     * @param array  $parameters
+     * @param string $parameter
+     * @param string $valueDefault
+     * @param string $type
+     *
+     * @return mixed
+     */
+    public function extractRequest(array $parameters, string $parameter, string $valueDefault, string $type='normal');
 }
