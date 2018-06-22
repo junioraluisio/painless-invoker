@@ -6,7 +6,7 @@
  * Time: 08:29
  */
 
-namespace Pandora\Email;
+namespace Pandora\Contracts\Email;
 
 interface iTemplates
 {
