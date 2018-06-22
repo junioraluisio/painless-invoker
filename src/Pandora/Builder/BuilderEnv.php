@@ -92,6 +92,7 @@ class BuilderEnv
         $text .= $this->line("MAIL_SMTP_SECURE=tls", 0, 1);
         $text .= $this->line("MAIL_SMTP_PORT=587", 0, 1);
         $text .= $this->line("MAIL_FROM=painless@domain.com", 0, 1);
+        $text .= $this->line("MAIL_TEMPLATE_PATH=/public/templates/mail", 0, 1);
         $text .= $this->line("MAIL_FROM_NAME=Painless", 0, 2);
         
         return $text;
