@@ -12,8 +12,10 @@ interface iTemplates
 {
     /**
      * iTemplates constructor.
+     *
+     * @param string $path
      */
-    public function __construct();
+    public function __construct(string $path);
     
     /**
      * @param string $template
@@ -21,4 +23,12 @@ interface iTemplates
      * @return mixed
      */
     public function load(string $template);
+    
+    /**
+     * @param array  $itens
+     * @param string $text
+     *
+     * @return mixed
+     */
+    public function replace(array $itens, string $text);
 }

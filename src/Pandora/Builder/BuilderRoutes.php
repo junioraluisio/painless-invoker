@@ -54,11 +54,11 @@ class BuilderRoutes
     {
         $obj = $this->getClassName();
         $objVar = $this->getNameParameter();
-        $nickParameter = $this->getNickParameter();
+        $objNickName = $this->getNickParameter();
         
         $text = "";
         
-        $text .= $this->line("\$container['dm_$nickParameter'] = function (\$c) {", 0, 1);
+        $text .= $this->line("\$container['dm" . ucfirst($objNickName) . "'] = function (\$c) {", 0, 1);
         $text .= $this->line("\$$objVar = new " . $obj . "();", 4, 2);
         $text .= $this->line("return new DataManager(\$c['conn'], \$$objVar);", 4, 1);
         $text .= $this->line("};", 0, 2);

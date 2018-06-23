@@ -244,7 +244,7 @@ class BuilderActions
         $text .= $this->line("public function __construct(Container \$container)", 4, 1);
         $text .= $this->line("{", 4, 1);
         $text .= $this->line("\$this->setValidation(\$container['validation']);", 8, 1);
-        $text .= $this->line("\$this->setDm(\$container['dm_$objNickName']);", 8, 1);
+        $text .= $this->line("\$this->setDm(\$container['dm" . ucfirst($objNickName) . "']);", 8, 1);
         $text .= $this->line("\$this->setConn(\$container['conn']);", 8, 1);
         $text .= $this->line("\$this->set" . $obj . "(\$this->dm->getObject());", 8, 1);
         $text .= $this->line("}", 4, 2);

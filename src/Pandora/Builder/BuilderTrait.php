@@ -226,7 +226,7 @@ trait BuilderTrait
         for ($i = 1; $i <= $count-1; $i++) {
             $subName = isset($arrTableName[$i]) ? $arrTableName[$i] : '';
             
-            $nickParameter .= $i > 1 ? '_' . $subName : $subName;
+            $nickParameter .= $i > 1 ? ucfirst($subName) : $subName;
         }
         
         $this->nickParameter = $nickParameter;

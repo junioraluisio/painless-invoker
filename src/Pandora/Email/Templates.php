@@ -8,6 +8,7 @@
 
 namespace Pandora\Email;
 
+use Pandora\Contracts\Email\iTemplates;
 
 class Templates implements iTemplates
 {
@@ -18,10 +19,12 @@ class Templates implements iTemplates
     
     /**
      * Templates constructor.
+     *
+     * @param string $path
      */
-    public function __construct()
+    public function __construct(string $path)
     {
-        $this->path = $_ENV['PATH_ROOT'] . $_ENV['MAIL_TEMPLATE_PATH'];
+        $this->path = $path;
     }
     
     /**
@@ -44,5 +47,19 @@ class Templates implements iTemplates
         } catch (\Exception $e) {
             return 'Erro: ' . $e;
         }
+    }
+    
+    /**
+     * @param array  $itens
+     * @param string $text
+     *
+     * @return mixed
+     */
+    public function replace(array $itens, string $text)
+    {
+        $search  = array_keys($itens);
+        $replace = array_values($itens);
+        
+        return str_replace($search, $replace, $text);
     }
 }
