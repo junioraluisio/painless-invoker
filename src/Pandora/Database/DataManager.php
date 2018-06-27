@@ -251,7 +251,9 @@ class DataManager implements iDataManager
             $set = [];
             
             foreach ($fields as $field) {
-                $set[] = $field . ' = :' . $this->clearPrefix($field);
+                if ($this->addPrefix('id') !== $field) {
+                    $set[] = $field . ' = :' . $this->clearPrefix($field);
+                }
             }
             
             $sql .= implode(', ', $set);
@@ -308,9 +310,9 @@ class DataManager implements iDataManager
         
         $methodsGet = $this->extractMethodsGet();
         
-        $methodsGetProhibited = ['getTable','getPrefix'];
+        $methodsGetProhibited = ['getTable', 'getPrefix'];
         
-        $methodsGetAllow = array_diff($methodsGet,$methodsGetProhibited);
+        $methodsGetAllow = array_diff($methodsGet, $methodsGetProhibited);
         
         foreach ($methodsGetAllow as $key => $method) {
             try {
@@ -405,8 +407,10 @@ class DataManager implements iDataManager
         $stmt = $this->conn->prepare($sql);
         
         foreach ($data as $key => $value) {
-            if ($value !== null) {
-                $stmt->bindValue(':' . $key, $value);
+            if ($this->addPrefix('id') !== $key) {
+                if ($value !== null) {
+                    $stmt->bindValue(':' . $this->clearPrefix($key), $value);
+                }
             }
         }
         
