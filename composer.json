@@ -6,8 +6,8 @@
   "homepage": "https://github.com/junioraluisio/factory/blob/master/composer.json",
   "authors": [
     {
-      "name": "Aluisio Matins Junior",
-      "email": "softpuzzle@gmail.com"
+      "name": "Junior Matins",
+      "email": "amjr.box@gmail.com"
     }
   ],
   "autoload": {
@@ -30,6 +30,8 @@
   },
   "require": {
     "twig/extensions": "^1.5",
-    "phpmailer/phpmailer": "^6.0"
+    "phpmailer/phpmailer": "^6.0",
+    "ext-pdo": "*",
+    "ext-json": "*"
   }
 }

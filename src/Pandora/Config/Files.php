@@ -10,6 +10,7 @@ namespace Pandora\Config;
 
 
 use Pandora\Contracts\Utils\iExtractFiles;
+use Pandora\Utils\ExtractFiles;
 
 /**
  * Class Files
@@ -18,14 +19,14 @@ use Pandora\Contracts\Utils\iExtractFiles;
 class Files
 {
     /**
-     * @var \Pandora\Utils\ExtractFiles
+     * @var ExtractFiles
      */
     private $extractFiles;
     
     /**
      * Files constructor.
      *
-     * @param \Pandora\Contracts\Utils\iExtractFiles $extractFiles
+     * @param iExtractFiles $extractFiles
      */
     public function __construct(iExtractFiles $extractFiles)
     {
@@ -33,16 +34,18 @@ class Files
     }
     
     /**
+     * @param string $path
+     *
      * @return array
      */
-    public function load(): array 
+    public function load(string $path): array
     {
         $filesConfig = $this->extractFiles->files();
         
         $config = [];
         
         foreach ($filesConfig as $k => $file) {
-            $config = array_merge($config, include 'config/' . $file);
+            $config = array_merge($config, include $path . '/config/' . $file);
         }
         
         return $config;
